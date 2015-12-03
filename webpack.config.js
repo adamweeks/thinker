@@ -11,9 +11,25 @@ var config = {
 	module: {
 		loaders: [
 			{
+				test: /\.css$/,
+				loader: 'style!css'
+			},
+			{
+				test: /\.scss$/,
+				loader: 'style!css!sass'
+			},
+			{
 				test:    /\.js$/,
 				loader:  'babel?presets[]=es2015',
 				exclude: /node_modules/
+			},
+			{
+				test: /\.(woff|ttf|woff2|eot)$/,
+				loader: 'file?name=fonts/[name].[ext]'
+			},
+			{
+				test: /\.(svg|jpg|gif|jpeg)$/,
+				loader: 'file?name=images/[name].[ext]'
 			}
 		]
 	}

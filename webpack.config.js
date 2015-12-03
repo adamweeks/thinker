@@ -10,6 +10,11 @@ var config = {
 	},
 	module: {
 		loaders: [
+            {
+				test: /\.html$/,
+				loader: 'raw',
+				exclude: /node_modules/
+			},
 			{
 				test: /\.css$/,
 				loader: 'style!css'

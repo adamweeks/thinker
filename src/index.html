@@ -3,28 +3,18 @@
 	<meta charset="utf-8">
 	<title>Thinker</title>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <base href="/">
 </head>
-<body>
+<body ng-app="thinker.app">
 	<nav class="teal lighten-2">
 		<div class="container">
-		<a href="#" class="brand-logo"><i class="material-icons">trending_down</i>Thinker</a>		
+		<a href="#" class="brand-logo"><i class="material-icons">trending_down</i>Thinker</a>
 		</div>
 	</nav>
-	<div class="container">		  
-		<div class="row">
-			<div class="center-align">
-				<div class="card blue-grey darken-1">
-					<div class="card-content white-text">
-						<span class="card-title">Welcome to Thinker</span>
-						<p>Would you like to start a game?</p>
-						<p>Join below</p>
-					</div>
-					<div class="card-action">
-						<a href="#">Start</a>					
-					</div>
-				</div>
-			</div>
-		</div>            
+	<div class="container">
+		<div ui-view>
+
+		</div>
 	</div>
 	<script src="bundle.js"></script>
 </body>

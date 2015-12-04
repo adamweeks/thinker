@@ -8,6 +8,13 @@ var config = {
 		path:      __dirname + '/src',
 		filename: 'bundle.js'
 	},
+    plugins: [
+		new webpack.ProvidePlugin({
+			$: 'jquery',
+			jQuery: 'jquery',
+			'window.jQuery': 'jquery'
+		})
+	],
 	module: {
 		loaders: [
             {

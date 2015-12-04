@@ -1,0 +1,21 @@
+<div class="row">
+	<div class="center-align">
+		<div class="card blue-grey darken-1">
+			<div class="card-content white-text">
+				<span class="card-title">Enter your question to start the game.</span>
+                <form name="vm.question">
+				<div class="input-field">
+                    <label for="questionText">Question</label>
+                    <input type="text" required name="questionText" id="questionText" ng-model="vm.questionText">
+				</div>
+                </form>
+			</div>
+			<div class="card-action">
+				<button class="btn-large"
+                   ng-class="{disabled: vm.question.questionText.$invalid}"
+                   ng-disabled="vm.question.questionText.$invalid"
+                   ng-click="vm.createGame()">Create</button>
+			</div>
+		</div>
+	</div>
+</div>

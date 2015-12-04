@@ -8,7 +8,7 @@ import gameTemplate from './game/game.html';
 import GameController from './game/game';
 
 
-function Config($stateProvider, $urlRouterProvider, $locationProvider) {
+function Config($stateProvider, $urlRouterProvider, $locationProvider, $mdThemingProvider) {
     $urlRouterProvider.otherwise('/');
 
     $stateProvider
@@ -32,8 +32,11 @@ function Config($stateProvider, $urlRouterProvider, $locationProvider) {
         });
 
     // $locationProvider.html5Mode(true);
+
+    $mdThemingProvider.theme('default')
+        .dark();
 }
 
-Config.$inject = ['$stateProvider', '$urlRouterProvider', '$locationProvider'];
+Config.$inject = ['$stateProvider', '$urlRouterProvider', '$locationProvider', '$mdThemingProvider'];
 
 export default Config;

@@ -6,15 +6,19 @@
     <base href="/">
 </head>
 <body ng-app="thinker.app">
-	<nav class="teal lighten-2">
-		<div class="container">
-		<a href="#" class="brand-logo"><i class="material-icons">trending_down</i>Thinker</a>
-		</div>
-	</nav>
-	<div class="container">
-		<div ui-view>
+    <md-content>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>
+                    <i class="material-icons">trending_down</i><span> Thinker</span>
+                </h2>
+            </div>
+        </md-toolbar>
+    </md-content>
+    <md-content class="md-padding" layout="row" layout-wrap layout-align="center start">
+        <div flex=60 flex-offset=15 ui-view>
 
 		</div>
-	</div>
+    </md-content>
 	<script src="bundle.js"></script>
 </body>

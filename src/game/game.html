@@ -1,1 +1,7 @@
-Game {{ vm.gameID }}
+<h2>Game {{ vm.gameID }}</h2>
+
+<game-question game="vm.game"></game-question>
+One:
+<game-guesser game="vm.game" guesser="1"></game-guesser>
+Two:
+<game-guesser game="vm.game" guesser="2"></game-guesser>

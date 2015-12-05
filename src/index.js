@@ -11,8 +11,13 @@ import '../node_modules/angular-material/angular-material.css';
 // Config
 import Config from './config';
 
+// Components
+import Components from './components/components';
+
 const ngModule = angular.module('thinker.app',
 	['ui.router',
-    'ngMaterial']);
+    'ngMaterial',
+    Components.name,
+    ]);
 
 ngModule.config(Config);

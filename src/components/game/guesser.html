@@ -1,4 +1,13 @@
-<md-card class="md-whiteframe-15dp">
+<md-card class="md-whiteframe-15dp" ng-if="!vm.guesser.user">
+    <md-card-title>
+        <md-card-title-text>
+            <span class="md-display-2">Waiting on guesser.</span>
+            <span class="md-subhead" ng-click="vm.guesser.user=true">Invite via X link</span>
+        </md-card-title-text>
+    </md-card-title>
+</md-card>
+
+<md-card class="md-whiteframe-15dp" ng-if="vm.guesser.user">
     <md-card-title>
         <md-card-title-text>
             <span class="md-display-2">{{vm.GameService.currentGame.guessers[vm.guesser]}}</span>

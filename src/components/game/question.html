@@ -3,6 +3,22 @@
         <md-card-title-text>
             <span class="md-display-2">{{vm.GameService.currentGame.question}}</span>
             <span class="md-subhead">Question</span>
+            <div ng-if="vm.GameService.currentGame.answer">Answered</div>
+            <div ng-if="!vm.GameService.currentGame.answer">
+                <md-card-content>
+                    <form name="vm.form">
+                        <md-input-container>
+                            <label>Answer</label>
+                            <input type="number" required name="questionAnswer" id="questionAnswer" ng-model="vm.questionAnswer">
+                        </md-input-container>
+                    </form>
+                </md-card-content>
+                <md-card-actions>
+                    <md-button ng-class="{disabled: vm.form.questionAnswer.$invalid}"
+                        ng-disabled="vm.form.questionAnswer.$invalid"
+                        ng-click="vm.saveAnswer()">Save</md-button>
+                </md-card-actions>
+            </div>
         </md-card-title-text>
     </md-card-title>
 </md-card>

@@ -6,7 +6,7 @@ let guesserComponent = function() {
         restrict: 'E',
         scope: {
             game: '=',
-            guesser: '=',
+            guesserNumber: '=',
         },
         template,
         controller,

@@ -3,6 +3,10 @@ class QuestionController {
         this.name = 'QuestionController';
         this.GameService = GameService;
     }
+
+    saveAnswer() {
+        this.GameService.saveAnswer(this.questionAnswer);
+    }
 }
 
 QuestionController.$inject = ['GameService'];

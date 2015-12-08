@@ -1,17 +1,20 @@
-<md-card class="md-whiteframe-15dp" ng-if="!vm.guesser.user">
-    <md-card-title>
-        <md-card-title-text>
-            <span class="md-display-2">Waiting on guesser.</span>
-            <span class="md-subhead" ng-click="vm.guesser.user=true">Invite via X link</span>
-        </md-card-title-text>
-    </md-card-title>
-</md-card>
-
-<md-card class="md-whiteframe-15dp" ng-if="vm.guesser.user">
-    <md-card-title>
-        <md-card-title-text>
-            <span class="md-display-2">{{vm.GameService.currentGame.guessers[vm.guesser]}}</span>
-            <span class="md-subhead">Guesser</span>
-        </md-card-title-text>
-    </md-card-title>
-</md-card>
+<div ng-if="!vm.guesser.user">
+    <md-card class="md-whiteframe-15dp">
+        <md-card-title>
+            <md-card-title-text>
+                <span class="md-display-2">Waiting on guesser.</span>
+                <span class="md-subhead" ng-click="vm.guesser.user=true">Invite via X link</span>
+            </md-card-title-text>
+        </md-card-title>
+    </md-card>
+</div>
+<div ng-if="vm.guesser.user">
+    <md-card class="md-whiteframe-15dp">
+        <md-card-title>
+            <md-card-title-text>
+                <span class="md-display-2">{{vm.guesser.user.name}}</span>
+                <span class="md-subhead">Guesser</span>
+            </md-card-title-text>
+        </md-card-title>
+    </md-card>
+</div>

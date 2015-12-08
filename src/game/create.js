@@ -6,8 +6,13 @@ class CreateGameController {
     }
 
     createGame() {
-        this.GameService.currentGame.question = this.questionText;
-        this.$state.go('game', {gameID: 'abc123'});
+        const state = this.$state;
+
+        const gameCreated = (game) => {
+            state.go('game', {gameID: game.gameID});
+        };
+
+        this.GameService.createGame(this.questionText).then(gameCreated);
     }
 }
 

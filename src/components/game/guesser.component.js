@@ -1,7 +1,7 @@
 import template from './guesser.html';
 import controller from './guesser.controller';
 
-let guesserComponent = function() {
+const guesserComponent = () => {
     return {
         restrict: 'E',
         scope: {

@@ -1,7 +1,12 @@
 <h2>Game {{ vm.gameID }}</h2>
-
-<game-question game="vm.game"></game-question>
-One:
-<game-guesser game="vm.game" guesser-number="0"></game-guesser>
-Two:
-<game-guesser game="vm.game" guesser-number="1"></game-guesser>
+<div ng-if="vm.gameLoaded">
+    <game-question game="vm.game"></game-question>
+    One:
+    <game-guesser game="vm.game" guesser-number="0"></game-guesser>
+    Two:
+    <game-guesser game="vm.game" guesser-number="1"></game-guesser>
+</div>
+<div ng-if="!vm.gameLoaded">
+    <h2>Loading...</h2>
+    <md-progress-linear md-mode="indeterminate"></md-progress-linear>
+</div>

@@ -1,7 +1,7 @@
 import template from './question.html';
 import controller from './question.controller';
 
-let questionComponent = function() {
+const questionComponent = () => {
     return {
         restrict: 'E',
         scope: {

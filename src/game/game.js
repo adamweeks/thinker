@@ -1,18 +1,21 @@
 class GameController {
-    constructor($stateParams) {
+    constructor($stateParams, GameService) {
+        this.GameService = GameService;
         this.name = 'GameController';
         this.gameID = $stateParams.gameID;
-        this.loadGame();
+        this.gameLoaded = false;
+        this.loadGame(this.gameID);
     }
 
     loadGame() {
-        this.game = {
-            gameID: this.gameID,
-            name: 'whatever',
-            question: 'what is the question?'};
+        const self = this;
+        this.GameService.loadGame(this.gameID).then(function gameLoaded(game) {
+            self.game = game;
+            self.gameLoaded = true;
+        });
     }
 }
 
-GameController.$inject = ['$stateParams'];
+GameController.$inject = ['$stateParams', 'GameService'];
 
 export default GameController;

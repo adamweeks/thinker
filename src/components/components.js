@@ -1,8 +1,10 @@
-import angular from 'angular';
+import * as angular from 'angular';
 import Game from './game/game';
+import Toolbar from './toolbar/toolbar';
 
-let componentModule = angular.module('thinker.components', [
-    Game.name
+const componentModule = angular.module('thinker.components', [
+    Game.name,
+    Toolbar.name,
 ]);
 
 export default componentModule;

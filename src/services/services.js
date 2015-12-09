@@ -1,8 +1,8 @@
-import angular from 'angular';
+import * as angular from 'angular';
 import GameService from './game.service';
 import UserService from './user.service';
 
-let servicesModule = angular.module('thinker.services', [
+const servicesModule = angular.module('thinker.services', [
 
 ]);
 

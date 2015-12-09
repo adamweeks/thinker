@@ -1,8 +1,17 @@
 class CreateGameController {
-    constructor($state, GameService) {
+    constructor($state, GameService, UserService) {
         this.name = 'CreateGameController';
         this.$state = $state;
         this.GameService = GameService;
+        this.UserService = UserService;
+
+        this.activate();
+    }
+
+    activate() {
+        if (!this.UserService.currentUser.isLoggedIn) {
+            this.$state.go('login', {from: 'create'});
+        }
     }
 
     createGame() {
@@ -16,6 +25,6 @@ class CreateGameController {
     }
 }
 
-CreateGameController.$inject = ['$state', 'GameService'];
+CreateGameController.$inject = ['$state', 'GameService', 'UserService'];
 
 export default CreateGameController;

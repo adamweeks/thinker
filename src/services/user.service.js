@@ -1,21 +1,26 @@
 class UserService {
     constructor() {
         this.isLoggedIn = false;
-        this.currentUser = false;
+        this.currentUser = {
+            isLoggedIn: false,
+            user: false,
+        };
     }
 
-    login() {
-        this.currentUser = {
+    login(username) {
+        const myUsername = username ? username : 'Username';
+        const user = {
             userID: 'abc123',
-            name: 'Username',
+            name: myUsername,
         };
-        this.isLoggedIn = true;
+        this.currentUser.user = user;
+        this.currentUser.isLoggedIn = true;
         return Promise.resolve(this.currentUser);
     }
 
     logout() {
-        this.isLoggedIn = false;
-        this.currentUser = false;
+        this.currentUser.user = false;
+        this.currentUser.isLoggedIn = false;
         return Promise.resolve(true);
     }
 }

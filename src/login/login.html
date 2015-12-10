@@ -4,17 +4,8 @@
             <span class="md-headline">Login to Thinker</span>
         </md-card-title-text>
     </md-card-title>
-    <md-card-content>
-        <form name="vm.loginForm">
-            <md-input-container>
-                <label>Username</label>
-                <input type="text" required name="username" id="username" ng-model="vm.username">
-            </md-input-container>
-        </form>
-    </md-card-content>
+
     <md-card-actions>
-        <md-button ng-class="{disabled: vm.loginForm.username.$invalid}"
-            ng-disabled="vm.loginForm.username.$invalid"
-            ng-click="vm.login()">Login</md-button>
+        <md-button class="md-raised md-primary" ng-click="vm.login()">Login With Twitter</md-button>
     </md-card-actions>
 </md-card>

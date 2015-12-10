@@ -8,7 +8,7 @@
             <md-button ui-sref="login">Login</md-button>
         </span>
         <span ng-if="vm.currentUser.isLoggedIn">
-            {{ vm.currentUser.user.name }}
+            {{ vm.currentUser.user.username }}
             <md-button ng-click="vm.logout()">Logout</md-button>
         </span>
     </div>

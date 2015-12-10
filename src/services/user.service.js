@@ -1,5 +1,6 @@
 class UserService {
-    constructor() {
+    constructor(FirebaseService) {
+        this.FirebaseService = FirebaseService;
         this.isLoggedIn = false;
         this.currentUser = {
             isLoggedIn: false,
@@ -7,15 +8,11 @@ class UserService {
         };
     }
 
-    login(username) {
-        const myUsername = username ? username : 'Username';
-        const user = {
-            userID: 'abc123',
-            name: myUsername,
-        };
-        this.currentUser.user = user;
-        this.currentUser.isLoggedIn = true;
-        return Promise.resolve(this.currentUser);
+    login() {
+        return this.FirebaseService.loginWithTwitter().then((user) => {
+            this.currentUser.user = user;
+            this.currentUser.isLoggedIn = true;
+        });
     }
 
     logout() {

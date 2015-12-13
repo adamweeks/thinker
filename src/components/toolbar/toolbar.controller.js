@@ -1,8 +1,10 @@
 class ToolbarController {
-    constructor(UserService, $rootScope) {
+    constructor(UserService, $rootScope, $state) {
         this.name = 'ToolbarController';
         this.UserService = UserService;
         this.$rootScope = $rootScope;
+        this.$state = $state;
+
         this.currentUser = UserService.currentUser;
 
         this.activate();
@@ -10,6 +12,7 @@ class ToolbarController {
 
     logout() {
         this.UserService.logout();
+        this.$state.go('home');
     }
 
     activate() {
@@ -28,6 +31,6 @@ class ToolbarController {
     }
 }
 
-ToolbarController.$inject = ['UserService', '$rootScope'];
+ToolbarController.$inject = ['UserService', '$rootScope', '$state'];
 
 export default ToolbarController;

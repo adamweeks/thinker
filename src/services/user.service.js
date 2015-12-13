@@ -31,7 +31,7 @@ class UserService {
 
     logout() {
         this.userLoggedOut();
-        return Promise.resolve(true);
+        this.FirebaseService.logout();
     }
 
     checkStoredUser() {

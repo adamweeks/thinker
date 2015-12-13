@@ -8,6 +8,10 @@ class FirebaseService {
         this.auth = $firebaseAuth(this.firebaseRef);
     }
 
+    logout() {
+        this.auth.$unauth();
+    }
+
     loginWithTwitter() {
         const service = this;
         return this.auth.$authWithOAuthPopup('twitter').then((authData) => {
@@ -55,6 +59,10 @@ class FirebaseService {
         };
 
         return new Promise(attemptAuth);
+    }
+
+    waitForAuth() {
+        return this.auth.$waitForAuth();
     }
 }
 

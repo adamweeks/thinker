@@ -9,9 +9,7 @@ class CreateGameController {
     }
 
     activate() {
-        if (!this.UserService.currentUser.isLoggedIn) {
-            this.$state.go('login', {from: 'create'});
-        }
+
     }
 
     createGame() {

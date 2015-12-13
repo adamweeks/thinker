@@ -26,6 +26,18 @@ function Config($stateProvider, $urlRouterProvider, $locationProvider, $mdThemin
             controller: CreateGameController,
             controllerAs: 'vm',
             template: createGameTemplate,
+            resolve: {
+                // controller will not be loaded until $waitForAuth resolves
+                // Auth refers to our $firebaseAuth wrapper in the example above
+                'currentAuth': ['FirebaseService', function(FirebaseService) {
+                // $waitForAuth returns a promise so the resolve waits for it to complete
+                    return FirebaseService.waitForAuth().then(function(value) {
+                        if (value === null) {
+                            return Promise.reject('AUTH_REQUIRED');
+                        }
+                    });
+                }],
+            },
         })
         .state('game', {
             url: '/game/:gameID',

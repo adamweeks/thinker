@@ -10,6 +10,8 @@ import '../node_modules/angular-material/angular-material.css';
 // Config
 import Config from './config';
 
+import Run from './run';
+
 // Components
 import Components from './components/components';
 
@@ -23,3 +25,5 @@ const ngModule = angular.module('thinker.app',
     ]);
 
 ngModule.config(Config);
+
+ngModule.run(Run);

@@ -11,11 +11,15 @@ class FirebaseService {
     loginWithTwitter() {
         const service = this;
         return this.auth.$authWithOAuthPopup('twitter').then((authData) => {
-            const user = service.createUser(authData.uid, authData.twitter.username, authData.twitter.profileImageURL);
+            const user = service.createUserWithTwitterAuth(authData);
             return service.saveUser(user);
         }).catch((error) => {
             return Promise.reject('Authentication failed:' + error);
         });
+    }
+
+    createUserWithTwitterAuth(twitterAuth) {
+        return this.createUser(twitterAuth.uid, twitterAuth.twitter.username, twitterAuth.twitter.profileImageURL);
     }
 
     createUser(userID, username, profileImage) {
@@ -37,6 +41,20 @@ class FirebaseService {
             return userRef.$save().then(saveComplete);
         };
         return userRef.$loaded().then(loadComplete);
+    }
+
+    checkStoredUser() {
+        const attemptAuth = (resolve, reject) => {
+            const authData = this.auth.$getAuth();
+            if (authData) {
+                const user = this.createUserWithTwitterAuth(authData);
+                resolve(user);
+            } else {
+                reject(true);
+            }
+        };
+
+        return new Promise(attemptAuth);
     }
 }
 

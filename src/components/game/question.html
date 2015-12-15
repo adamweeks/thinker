@@ -1,10 +1,19 @@
 <md-card class="md-whiteframe-15dp">
+    <md-card-header ng-if="vm.game.answer.user">
+        <md-card-avatar>
+            <img class="md-user-avatar" ng-src="{{ vm.game.answer.user.profileImage }}"/>
+        </md-card-avatar>
+        <md-card-header-text>
+            <span class="md-title">{{ vm.game.answer.user.username }}</span>
+            <span class="md-subhead">Answering</span>
+        </md-card-header-text>
+    </md-card-header>
     <md-card-title>
         <md-card-title-text>
             <span class="md-display-2">{{vm.game.question}}</span>
             <span class="md-subhead">Question</span>
-            <div ng-if="vm.game.answer">Answered</div>
-            <div ng-if="!vm.game.answer">
+            <div ng-if="vm.game.answer.value">Answered</div>
+            <div ng-if="!vm.game.answer.value">
                 <md-card-content>
                     <form name="vm.form">
                         <md-input-container>

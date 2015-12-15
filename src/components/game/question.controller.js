@@ -5,7 +5,7 @@ class QuestionController {
     }
 
     saveAnswer() {
-        this.GameService.saveAnswer(this.questionAnswer);
+        this.GameService.saveAnswer(this.game, this.questionAnswer);
     }
 }
 

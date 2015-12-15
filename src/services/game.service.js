@@ -2,7 +2,10 @@ class GameObject {
     constructor() {
         this.gameID = false;
         this.question = 'This is a default question for now?';
-        this.answer = false;
+        this.answer = {
+            user: false,
+            value: false,
+        };
         this.inProgress = false;
         this.creator = false;
         this.guessers = [
@@ -38,21 +41,23 @@ class GameService {
 
     buildNewGame(gameQuestion) {
         const game = new GameObject();
-        game.creator = this.UserService.currentUser.user.userID;
+        game.creator = this.UserService.currentUser.user;
         game.inProgress = true;
         game.question = gameQuestion;
 
         // Guesser 1 is always the creator of the game
         game.guessers[0].user =
         {
-            'id': this.UserService.currentUser.user.userID,
+            'id': this.UserService.currentUser.user,
             'name': 'Me',
         };
         return game;
     }
 
     saveAnswer(game, answer) {
-        game.answer = answer;
+        game.answer.value = answer;
+        game.answer.user = this.UserService.currentUser.user;
+        return game.$save();
     }
 }
 

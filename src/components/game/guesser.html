@@ -2,18 +2,27 @@
     <md-card class="md-whiteframe-15dp">
         <md-card-title>
             <md-card-title-text>
-                <span class="md-display-2">Waiting on guesser.</span>
-                <span class="md-subhead" ng-click="vm.guesser.user=true">Invite via X link</span>
+                <span class="md-title">Waiting on guesser.</span>
+                <span class="md-subhead"><md-button ng-click="vm.joinAsGuesser()" class="md-primary md-raised">Join</md-button></span>
+                <span class="md-subhead">Invite via X link</span>
             </md-card-title-text>
         </md-card-title>
     </md-card>
 </div>
 <div ng-if="vm.guesser.user">
     <md-card class="md-whiteframe-15dp">
+        <md-card-header ng-if="vm.guesser.user">
+            <md-card-avatar>
+                <img class="md-user-avatar" ng-src="{{ vm.guesser.user.profileImage }}"/>
+            </md-card-avatar>
+            <md-card-header-text>
+                <span class="md-title">{{ vm.guesser.user.username }}</span>
+                <span class="md-subhead">Guessing</span>
+            </md-card-header-text>
+        </md-card-header>
         <md-card-title>
             <md-card-title-text>
-                <span class="md-display-2">{{vm.guesser.user.name}}</span>
-                <span class="md-subhead">Guesser</span>
+                <span class="md-headline">Enter a guess here.</span>
             </md-card-title-text>
         </md-card-title>
     </md-card>

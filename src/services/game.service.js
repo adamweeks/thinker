@@ -19,46 +19,43 @@ class GameObject {
 }
 
 class GameService {
-    constructor(UserService) {
+    constructor(UserService, FirebaseService) {
         this.UserService = UserService;
-        this.currentGame = false;
+        this.FirebaseService = FirebaseService;
     }
 
     loadGame(gameID) {
-        let game = this.currentGame;
-        if (!game) {
-            game = this.defaultGame(gameID);
-            this.currentGame = game;
-        }
-        return Promise.resolve(game);
+        return this.FirebaseService.loadGame(gameID);
     }
 
     createGame(gameQuestion) {
-        this.currentGame = this.defaultGame(false, gameQuestion);
-        return Promise.resolve(this.currentGame);
+        const currentGame = this.buildNewGame(gameQuestion);
+        return this.FirebaseService.createNewGame(currentGame).then((gameID) => {
+            currentGame.gameID = gameID;
+            return currentGame;
+        });
     }
 
-    defaultGame(gameID, gameQuestion) {
+    buildNewGame(gameQuestion) {
         const game = new GameObject();
-        game.gameID = gameID ? gameID : 'abcd1234';
-        game.creator = this.UserService.currentUser.userID;
+        game.creator = this.UserService.currentUser.user.userID;
         game.inProgress = true;
-        game.question = gameQuestion ? gameQuestion : 'This is a default question for now?';
+        game.question = gameQuestion;
 
         // Guesser 1 is always the creator of the game
         game.guessers[0].user =
         {
-            'id': this.UserService.currentUser.userID,
+            'id': this.UserService.currentUser.user.userID,
             'name': 'Me',
         };
         return game;
     }
 
-    saveAnswer(answer) {
-        this.currentGame.answer = answer;
+    saveAnswer(game, answer) {
+        game.answer = answer;
     }
 }
 
-GameService.$inject = ['UserService'];
+GameService.$inject = ['UserService', 'FirebaseService'];
 
 export default GameService;

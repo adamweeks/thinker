@@ -1,10 +1,12 @@
 import Firebase from 'firebase';
 
 class FirebaseService {
-    constructor($firebaseAuth, $firebaseObject) {
+    constructor($firebaseAuth, $firebaseObject, $firebaseArray) {
         this.$firebaseAuth = $firebaseAuth;
         this.$firebaseObject = $firebaseObject;
+        this.$firebaseArray = $firebaseArray;
         this.firebaseRef = new Firebase('https://thinker.firebaseio.com');
+        this.gamesRef = this.firebaseRef.child('games');
         this.auth = $firebaseAuth(this.firebaseRef);
     }
 
@@ -64,8 +66,20 @@ class FirebaseService {
     waitForAuth() {
         return this.auth.$waitForAuth();
     }
+
+    createNewGame(game) {
+        const games = this.$firebaseArray(this.gamesRef);
+        return games.$add(game).then((gameRef) => {
+            return gameRef.key();
+        });
+    }
+
+    loadGame(gameID) {
+        const game = this.$firebaseObject(this.gamesRef.child(gameID));
+        return game.$loaded();
+    }
 }
 
-FirebaseService.$inject = ['$firebaseAuth', '$firebaseObject'];
+FirebaseService.$inject = ['$firebaseAuth', '$firebaseObject', '$firebaseArray'];
 
 export default FirebaseService;

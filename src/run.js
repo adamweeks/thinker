@@ -3,7 +3,7 @@ function run($rootScope, $state) {
         // We can catch the error thrown when the $requireAuth promise is rejected
         // and redirect the user back to the home page
         if (error === 'AUTH_REQUIRED') {
-            $state.go('home');
+            $state.go('login');
         }
     });
 }

@@ -3,8 +3,8 @@
         <md-card-title-text>
             <span class="md-display-2">{{vm.game.question}}</span>
             <span class="md-subhead">Question</span>
-            <div ng-if="vm.GameService.currentGame.answer">Answered</div>
-            <div ng-if="!vm.GameService.currentGame.answer">
+            <div ng-if="vm.game.answer">Answered</div>
+            <div ng-if="!vm.game.answer">
                 <md-card-content>
                     <form name="vm.form">
                         <md-input-container>

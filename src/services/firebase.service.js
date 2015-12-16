@@ -67,13 +67,19 @@ class FirebaseService {
     createNewGame(game) {
         const games = this.$firebaseArray(this.gamesRef);
         return games.$add(game).then((gameRef) => {
-            return gameRef.key();
+            return this.loadGame(gameRef.key());
         });
     }
 
     loadGame(gameID) {
         const game = this.$firebaseObject(this.gamesRef.child(gameID));
         return game.$loaded();
+    }
+
+    guesserObject(game, guesserNumber) {
+        const gameID = game.$id;
+        const guesser = this.$firebaseObject(this.gamesRef.child(gameID).child('guessers').child(guesserNumber));
+        return guesser.$loaded();
     }
 }
 

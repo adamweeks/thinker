@@ -12,10 +12,12 @@ class GameObject {
             {
                 user: false,
                 guess: false,
+                active: false,
             },
             {
                 user: false,
                 guess: false,
+                active: false,
             },
         ];
     }
@@ -33,9 +35,10 @@ class GameService {
 
     createGame(gameQuestion) {
         const currentGame = this.buildNewGame(gameQuestion);
-        return this.FirebaseService.createNewGame(currentGame).then((gameID) => {
-            currentGame.gameID = gameID;
-            return currentGame;
+        return this.FirebaseService.createNewGame(currentGame).then((game) => {
+            game.gameID = game.$id;
+            game.$save();
+            return game;
         });
     }
 
@@ -56,13 +59,8 @@ class GameService {
         return game.$save();
     }
 
-    /**
-     * Determines if a user can answer a question.
-     * Rules: User must be logged in, user may not be a guesser,
-     * answer can either have no user or passed user.
-     */
-    userCanAnswer(game, user) {
-        let canAnswer = false;
+    userInGame(game, user) {
+        let inGame = false;
 
         if (user) {
             // Guessers cannot answer
@@ -72,14 +70,17 @@ class GameService {
 
             if (!game.guessers.some(guesserIsUser)) {
                 if (!game.answer.user) {
-                    canAnswer = true;
+                    inGame = true;
                 } else if (game.answer.user.userID === user.userID) {
-                    canAnswer = true;
+                    inGame = true;
                 }
             }
         }
+        return inGame;
+    }
 
-        return canAnswer;
+    guesserObject(game, guesserNumber) {
+        return this.FirebaseService.guesserObject(game, guesserNumber);
     }
 }
 

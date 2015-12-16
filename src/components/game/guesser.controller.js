@@ -3,13 +3,29 @@ class GuesserController {
         this.name = 'GuesserController';
         this.GameService = GameService;
         this.UserService = UserService;
-        this.guesser = this.game.guessers[this.guesserNumber];
+
+        this.activate();
+    }
+
+    activate() {
+        this.GameService.guesserObject(this.game, this.guesserNumber).then((guesser) => {
+            this.guesser = guesser;
+        });
+        this.canJoin = !this.GameService.userInGame(this.game, this.UserService.currentUser.user);
     }
 
     joinAsGuesser() {
         this.game.guessers[this.guesserNumber].user = this.UserService.currentUser.user;
         this.guesser.user = this.UserService.currentUser.user;
         this.game.$save();
+    }
+
+    saveGuess() {
+        // TODO: Implement save and activate other guess
+    }
+
+    lowerGuess() {
+        // TODO: Implement game ending
     }
 }
 

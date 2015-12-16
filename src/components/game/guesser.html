@@ -1,29 +1,75 @@
-<div ng-if="!vm.guesser.user">
-    <md-card class="md-whiteframe-15dp">
-        <md-card-title>
-            <md-card-title-text>
-                <span class="md-title">Waiting on guesser.</span>
-                <span class="md-subhead"><md-button ng-click="vm.joinAsGuesser()" class="md-primary md-raised">Join</md-button></span>
-                <span class="md-subhead">Invite via X link</span>
-            </md-card-title-text>
-        </md-card-title>
-    </md-card>
-</div>
-<div ng-if="vm.guesser.user">
-    <md-card class="md-whiteframe-15dp">
-        <md-card-header ng-if="vm.guesser.user">
-            <md-card-avatar>
-                <img class="md-user-avatar" ng-src="{{ vm.guesser.user.profileImage }}"/>
-            </md-card-avatar>
-            <md-card-header-text>
-                <span class="md-title">{{ vm.guesser.user.username }}</span>
-                <span class="md-subhead">Guessing</span>
-            </md-card-header-text>
-        </md-card-header>
-        <md-card-title>
-            <md-card-title-text>
-                <span class="md-headline">Enter a guess here.</span>
-            </md-card-title-text>
-        </md-card-title>
-    </md-card>
-</div>
+<md-card class="md-whiteframe-15dp">
+    <md-card-header ng-if="vm.guesser.user">
+        <md-card-avatar>
+            <img class="md-user-avatar" ng-src="{{ vm.guesser.user.profileImage }}"/>
+        </md-card-avatar>
+        <md-card-header-text>
+            <span class="md-title">{{ vm.guesser.user.username }}</span>
+            <span class="md-subhead">Guessing</span>
+        </md-card-header-text>
+    </md-card-header>
+    <md-card-header ng-if="!vm.guesser.user">
+        <md-card-header-text>
+            <span class="md-title">Waiting...</span>
+            <span class="md-subhead">Guessing</span>
+        </md-card-header-text>
+    </md-card-header>
+    <!-- Guess states:
+        1) No user, can join = Join Button
+        2) No user, cannot join = Waiting on guesser
+        3) Other user, currently guessing = Waiting to guess
+        4) Other user, waiting to guess = Waiting for guess
+        5) Other user, waiting on answer = Waiting on answer
+        6) Current user, currently guessing = Enter Guess
+        7) Current user, waiting to guess = Waiting for guess
+        8) Current user, waiting on answer = Waiting on answer
+        -->
+    <div ng-if="vm.guesser.user">
+        <div ng-if="!vm.game.answer.value">
+            <md-card-content>
+                <span class="md-headline">Waiting on answer</span>
+            </md-card-content>
+        </div>
+        <div ng-if="vm.game.answer.value && !vm.guesser.active">
+            <md-card-content>
+                <span class="md-headline">Waiting for guess</span>
+            </md-card-content>
+        </div>
+        <div ng-if="vm.game.answer.value && vm.guesser.active && vm.guesser.user.userID !== vm.UserService.currentUser.user.userID">
+            <md-card-content>
+                <span class="md-headline">Waiting to guess</span>
+            </md-card-content>
+        </div>
+        <div ng-if="vm.game.answer.value && vm.guesser.active && vm.guesser.user.userID === vm.UserService.currentUser.user.userID">
+            <md-card-content>
+                <form name="vm.form">
+                    <md-input-container>
+                        <label>Guess</label>
+                        <input type="number" required name="guess" id="guess" ng-model="vm.guess">
+                    </md-input-container>
+                </form>
+            </md-card-content>
+            <md-card-actions layout="row" layout-align="start">
+                <md-button class="md-raised md-primary" ng-class="{disabled: vm.form.guess.$invalid}"
+                    ng-disabled="vm.form.guess.$invalid"
+                    ng-click="vm.saveGuess()">Save</md-button>
+                <md-button class="md-raised md-warning"
+                    ng-click="vm.lowerGuess()">Lower!</md-button>
+            </md-card-actions>
+        </div>
+    </div>
+    <div ng-if="!vm.guesser.user">
+        <div ng-if="vm.canJoin">
+            <md-card-actions layout="row" layout-align="start">
+                <md-button class="md-raised md-primary" ng-click="vm.joinAsGuesser()">
+                    Join
+                </md-button>
+            </md-card-actions>
+        </div>
+        <div ng-if="!vm.canJoin">
+            <md-card-content>
+                <span class="md-headline">Waiting on guesser to join</span>
+            </md-card-content>
+        </div>
+    </div>
+</md-card>

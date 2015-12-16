@@ -46,11 +46,7 @@ class GameService {
         game.question = gameQuestion;
 
         // Guesser 1 is always the creator of the game
-        game.guessers[0].user =
-        {
-            'id': this.UserService.currentUser.user,
-            'name': 'Me',
-        };
+        game.guessers[0].user = this.UserService.currentUser.user;
         return game;
     }
 
@@ -58,6 +54,32 @@ class GameService {
         game.answer.value = answer;
         game.answer.user = this.UserService.currentUser.user;
         return game.$save();
+    }
+
+    /**
+     * Determines if a user can answer a question.
+     * Rules: User must be logged in, user may not be a guesser,
+     * answer can either have no user or passed user.
+     */
+    userCanAnswer(game, user) {
+        let canAnswer = false;
+
+        if (user) {
+            // Guessers cannot answer
+            const guesserIsUser = (guesser) => {
+                return guesser.user.userID === user.userID;
+            };
+
+            if (!game.guessers.some(guesserIsUser)) {
+                if (!game.answer.user) {
+                    canAnswer = true;
+                } else if (game.answer.user.userID === user.userID) {
+                    canAnswer = true;
+                }
+            }
+        }
+
+        return canAnswer;
     }
 }
 

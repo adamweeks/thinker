@@ -1,4 +1,5 @@
 import Firebase from 'firebase';
+import UserObject from './user.object';
 
 class FirebaseService {
     constructor($firebaseAuth, $firebaseObject, $firebaseArray) {
@@ -29,11 +30,7 @@ class FirebaseService {
     }
 
     createUser(userID, username, profileImage) {
-        const user = {
-            userID: userID,
-            username: username,
-            profileImage: profileImage,
-        };
+        const user = new UserObject(userID, username, profileImage);
         return user;
     }
 

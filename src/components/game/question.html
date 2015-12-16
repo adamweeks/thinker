@@ -12,8 +12,20 @@
         <md-card-title-text>
             <span class="md-display-2">{{vm.game.question}}</span>
             <span class="md-subhead">Question</span>
-            <div ng-if="vm.game.answer.value">Answered</div>
-            <div ng-if="!vm.game.answer.value">
+        </md-card-title-text>
+    </md-card-title>
+    <!-- Game has been answered -->
+    <div ng-if="vm.game.answer.value">
+        <md-card-content>
+            Answered
+        </md-card-content>
+    </div>
+    <!-- Game has not been answered -->
+    <div ng-if="!vm.game.answer.value">
+        <!-- User can answer -->
+        <div ng-if="vm.canAnswer">
+            <!-- User is answering -->
+            <div ng-if="vm.answering">
                 <md-card-content>
                     <form name="vm.form">
                         <md-input-container>
@@ -22,12 +34,25 @@
                         </md-input-container>
                     </form>
                 </md-card-content>
-                <md-card-actions>
-                    <md-button ng-class="{disabled: vm.form.questionAnswer.$invalid}"
+                <md-card-actions layout="row" layout-align="start">
+                    <md-button class="md-raised md-primary" ng-class="{disabled: vm.form.questionAnswer.$invalid}"
                         ng-disabled="vm.form.questionAnswer.$invalid"
                         ng-click="vm.saveAnswer()">Save</md-button>
                 </md-card-actions>
             </div>
-        </md-card-title-text>
-    </md-card-title>
+            <!-- User is not answering -->
+            <div ng-if="!vm.answering">
+                <md-card-actions layout="row" layout-align="start">
+                    <md-button class="md-raised md-primary"
+                        ng-click="vm.startAnswer()">Answer Question</md-button>
+                </md-card-actions>
+            </div>
+        </div>
+        <!-- User cannot answer and hasn't been answered-->
+        <div ng-if="!vm.canAnswer">
+            <md-card-content>
+                <span class="md-headline">Waiting on answer</span>
+            </md-card-content>
+        </div>
+    </div>
 </md-card>

@@ -12,11 +12,11 @@ class QuestionController {
     }
 
     activate() {
-        this.canAnswer = this.GameService.userInGame(this.game, this.UserService.currentUser.user);
+        this.canAnswer = !this.GameService.userInGame(this.game, this.UserService.currentUser.user);
     }
 
     startAnswer() {
-        if (this.GameService.userInGame(this.game, this.UserService.currentUser.user)) {
+        if (!this.GameService.userInGame(this.game, this.UserService.currentUser.user)) {
             this.answering = true;
         }
     }

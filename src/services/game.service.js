@@ -7,6 +7,7 @@ class GameObject {
             value: false,
         };
         this.inProgress = false;
+        this.started = false;
         this.creator = false;
         this.guessers = [
             {
@@ -56,7 +57,7 @@ class GameService {
     saveAnswer(game, answer) {
         game.answer.value = answer;
         game.answer.user = this.UserService.currentUser.user;
-        return game.$save();
+        return this.stepGame(game);
     }
 
     userInGame(game, user) {
@@ -69,11 +70,12 @@ class GameService {
             };
 
             if (!game.guessers.some(guesserIsUser)) {
-                if (!game.answer.user) {
-                    inGame = true;
-                } else if (game.answer.user.userID === user.userID) {
+                if (game.answer.user && game.answer.user.userID === user.userID) {
                     inGame = true;
                 }
+            } else {
+                // User is a guesser
+                inGame = true;
             }
         }
         return inGame;
@@ -81,6 +83,36 @@ class GameService {
 
     guesserObject(game, guesserNumber) {
         return this.FirebaseService.guesserObject(game, guesserNumber);
+    }
+
+    /**
+     * Progress the game to the next step after an action has occurred
+     */
+    stepGame(game) {
+        let returnGame;
+        if (game.started) {
+            // TODO: Figure out whose turn it is and activate them
+            returnGame = game.$save();
+        } else if (game.answer.value && game.guessers[0].user && game.guessers[1].user) {
+            // Game is ready to start
+            returnGame = this.startGame(game);
+        } else {
+            returnGame = game.$save();
+        }
+        return returnGame;
+    }
+
+    startGame(game) {
+        // Sanity check
+        if (game.answer.value && game.guessers[0].user && game.guessers[1].user) {
+            game.guessers[0].active = true;
+            game.started = true;
+        }
+        return game.$save();
+    }
+
+    endGame(game) {
+        // TODO: Implement
     }
 }
 

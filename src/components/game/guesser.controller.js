@@ -17,7 +17,7 @@ class GuesserController {
     joinAsGuesser() {
         this.game.guessers[this.guesserNumber].user = this.UserService.currentUser.user;
         this.guesser.user = this.UserService.currentUser.user;
-        this.game.$save();
+        return this.GameService.stepGame(this.game);
     }
 
     saveGuess() {

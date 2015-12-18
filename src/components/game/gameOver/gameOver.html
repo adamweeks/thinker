@@ -1,0 +1,42 @@
+<md-card class="md-whiteframe-15dp">
+    <md-card-header>
+        <md-card-header-text>
+            <span class="md-title">Game Over!</span>
+        </md-card-header-text>
+    </md-card-header>
+    <md-card-content>
+        <md-list>
+            <md-subheader class="md-no-sticky">Question</md-subheader>
+            <md-list-item>
+                <div class="md-list-item-text">
+                    <h3>"{{ ::vm.game.question }}"</h3>
+                </div>
+            </md-list-item>
+            <md-divider></md-divider>
+            <md-subheader class="md-no-sticky">Answer</md-subheader>
+            <md-list-item class="md-2-line">
+                <img ng-src="{{ ::vm.game.answer.user.profileImage }}" class="md-avatar" alt="{{::vm.game.answer.user.username}}" />
+                <div class="md-list-item-text" layout="column">
+                    <h3>"{{ ::vm.game.answer.value }}"</h3>
+                    <h4>{{ ::vm.game.answer.user.username }}</h4>
+                </div>
+            </md-list-item>
+            <md-divider></md-divider>
+            <md-subheader class="md-no-sticky">Guessers</md-subheader>
+            <md-list-item class="md-3-line" ng-repeat="guesser in vm.game.guessers">
+                <img ng-src="{{ ::guesser.user.profileImage }}" class="md-avatar" alt="{{::guesser.user.username}}" />
+                <div class="md-list-item-text" layout="column">
+                    <div ng-if="guesser.user.userID === vm.game.winner.user.userID">
+                        <h3>Winner!</h3>
+                        <h4>{{ ::guesser.user.username }}</h4>
+                        <p>{{ ::vm.game.winngingGuess }}</p>
+                    </div>
+                    <div ng-if="guesser.user.userID !== vm.game.winner.user.userID">
+                        <h3>Loser!</h3>
+                        <h4>{{ ::guesser.user.username }}</h4>
+                        <p>Last Guess: {{ ::guesser.guess }}</p>
+                    </div>
+                </div>
+            </md-list-item>
+    </md-card-content>
+</md-card>

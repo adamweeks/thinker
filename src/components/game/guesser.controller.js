@@ -28,7 +28,9 @@ class GuesserController {
     }
 
     lowerGuess() {
-        // TODO: Implement game ending
+        this.GameService.guessLower(this.game, this.guesserNumber).then(() => {
+            this.guesser.active = false;
+        });
     }
 }
 

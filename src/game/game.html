@@ -1,8 +1,13 @@
 <h2>Game {{ vm.gameID }}</h2>
-<div ng-if="vm.gameLoaded">
+<div ng-if="vm.gameLoaded && vm.game.inProgress">
     <game-question game="vm.game"></game-question>
     <game-guesser game="vm.game" guesser-number="0"></game-guesser>
     <game-guesser game="vm.game" guesser-number="1"></game-guesser>
+</div>
+<div ng-if="vm.gameLoaded && !vm.game.inProgress">
+    <!-- TODO: Game Over Component -->
+    <!-- <game-over game="vm.game"></game-over> -->
+    Game Over
 </div>
 <div ng-if="!vm.gameLoaded">
     <h2>Loading...</h2>

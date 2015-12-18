@@ -9,6 +9,8 @@ class GameObject {
         this.inProgress = false;
         this.started = false;
         this.creator = false;
+        this.winner = false;
+        this.winningGuess = false;
         this.currentGuess = 0;
         this.guessers = [
             {
@@ -86,6 +88,12 @@ class GameService {
         return this.FirebaseService.guesserObject(game, guesserNumber);
     }
 
+    activeUserForGame(game) {
+        return game.guessers.find((guesser) => {
+            return guesser.active;
+        });
+    }
+
     /**
      * Value in guess is updated, change active guesser to next
      */
@@ -98,6 +106,20 @@ class GameService {
         nextGuesser.active = true;
         game.currentGuess = guess;
         return game.$save();
+    }
+
+    guessLower(game, guesserNumber) {
+        const currentGuesser = game.guessers[guesserNumber];
+        const lastGuesserNumber = guesserNumber === 0 ? 1 : 0;
+        const lastGuesser = game.guessers[lastGuesserNumber];
+        if (game.answer.value < game.currentGuess) {
+            game.winner = currentGuesser;
+            game.winningGuess = 'Lower than ' + game.currentGuess;
+        } else {
+            game.winner = lastGuesser;
+            game.winngingGuess = 'Guess of ' + game.currentGuess;
+        }
+        return this.endGame(game);
     }
 
     /**
@@ -127,7 +149,11 @@ class GameService {
     }
 
     endGame(game) {
-        // TODO: Implement
+        game.guessers.forEach((guesser) => {
+            guesser.active = false;
+        });
+        game.inProgress = false;
+        return game.$save();
     }
 }
 

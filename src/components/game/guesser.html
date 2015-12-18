@@ -44,8 +44,15 @@
             <md-card-content>
                 <form name="vm.form">
                     <md-input-container>
-                        <label>Guess</label>
-                        <input type="number" required name="guess" id="guess" ng-model="vm.guess">
+                        <label>Guess: Currently {{vm.game.currentGuess}}</label>
+                        <input
+                            type="number"
+                            required
+                            name="guess"
+                            id="guess"
+                            ng-model="vm.guess"
+                            min="{{vm.game.currentGuess + 1}}" 
+                            />
                     </md-input-container>
                 </form>
             </md-card-content>

@@ -9,6 +9,7 @@ class GameObject {
         this.inProgress = false;
         this.started = false;
         this.creator = false;
+        this.currentGuess = 0;
         this.guessers = [
             {
                 user: false,
@@ -83,6 +84,20 @@ class GameService {
 
     guesserObject(game, guesserNumber) {
         return this.FirebaseService.guesserObject(game, guesserNumber);
+    }
+
+    /**
+     * Value in guess is updated, change active guesser to next
+     */
+    saveGuess(game, guesserNumber, guess) {
+        const currentGuesser = game.guessers[guesserNumber];
+        const nextGuesserNumber = guesserNumber === 0 ? 1 : 0;
+        const nextGuesser = game.guessers[nextGuesserNumber];
+        currentGuesser.active = false;
+        currentGuesser.guess = guess;
+        nextGuesser.active = true;
+        game.currentGuess = guess;
+        return game.$save();
     }
 
     /**

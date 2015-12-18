@@ -55,6 +55,7 @@ function Config($stateProvider, $urlRouterProvider, $locationProvider, $mdThemin
     // $locationProvider.html5Mode(true);
 
     $mdThemingProvider.theme('default')
+        .primaryPalette('yellow')
         .dark();
 }
 

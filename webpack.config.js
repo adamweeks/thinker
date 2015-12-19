@@ -5,7 +5,7 @@ var config = {
 	devtool: 'source-map',
 	entry:   './index.js',
 	output:  {
-		path:      __dirname + '/src',
+		path:      __dirname + '/dist',
 		filename: 'bundle.js'
 	},
     plugins: [

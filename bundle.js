@@ -71707,7 +71707,7 @@
 	    }, {
 	        key: 'activate',
 	        value: function activate() {
-	            this.canAnswer = !this.GameService.userInGame(this.game, this.UserService.currentUser.user);
+	            this.canAnswer = !this.GameService.userInGame(this.game, this.UserService.currentUser.user) && this.UserService.currentUser.user;
 	        }
 	    }, {
 	        key: 'startAnswer',

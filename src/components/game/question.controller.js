@@ -12,7 +12,7 @@ class QuestionController {
     }
 
     activate() {
-        this.canAnswer = !this.GameService.userInGame(this.game, this.UserService.currentUser.user);
+        this.canAnswer = !this.GameService.userInGame(this.game, this.UserService.currentUser.user) && this.UserService.currentUser.user;
     }
 
     startAnswer() {

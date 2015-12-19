@@ -1,3 +1,10 @@
+class GameHistoryObject {
+    constructor(user, event) {
+        this.user = user;
+        this.event = event;
+    }
+}
+
 class GameObject {
     constructor() {
         this.gameID = false;
@@ -39,11 +46,17 @@ class GameService {
 
     createGame(gameQuestion) {
         const currentGame = this.buildNewGame(gameQuestion);
-        return this.FirebaseService.createNewGame(currentGame).then((game) => {
-            game.gameID = game.$id;
-            game.$save();
-            return game;
-        });
+        return this.FirebaseService
+            .createNewGame(currentGame)
+            .then((game) => {
+                game.gameID = game.$id;
+                game.$save();
+                return game;
+            })
+            .then((game) => {
+                this.addHistoryToGame(game, this.UserService.currentUser.user, 'Created Game');
+                return game;
+            });
     }
 
     buildNewGame(gameQuestion) {
@@ -154,6 +167,15 @@ class GameService {
         });
         game.inProgress = false;
         return game.$save();
+    }
+
+    addHistoryToGame(game, user, event) {
+        const historyItem = new GameHistoryObject(user, event);
+        return this.FirebaseService
+            .gameHistory(game)
+            .then((gameHistory) => {
+                return gameHistory.$add(historyItem);
+            });
     }
 }
 

@@ -8,6 +8,7 @@ class FirebaseService {
         this.$firebaseArray = $firebaseArray;
         this.firebaseRef = new Firebase('https://thinker.firebaseio.com');
         this.gamesRef = this.firebaseRef.child('games');
+        this.gameHistoryRef = this.firebaseRef.child('gameHistory');
         this.auth = $firebaseAuth(this.firebaseRef);
     }
 
@@ -80,6 +81,11 @@ class FirebaseService {
         const gameID = game.$id;
         const guesser = this.$firebaseObject(this.gamesRef.child(gameID).child('guessers').child(guesserNumber));
         return guesser.$loaded();
+    }
+
+    gameHistory(game) {
+        const history = this.$firebaseArray(this.gameHistoryRef.child(game.$id));
+        return history.$loaded();
     }
 }
 

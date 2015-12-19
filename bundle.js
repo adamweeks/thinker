@@ -58,19 +58,21 @@
 	
 	__webpack_require__(11);
 	
-	var _config = __webpack_require__(15);
+	__webpack_require__(15);
+	
+	var _config = __webpack_require__(17);
 	
 	var _config2 = _interopRequireDefault(_config);
 	
-	var _run = __webpack_require__(24);
+	var _run = __webpack_require__(26);
 	
 	var _run2 = _interopRequireDefault(_run);
 	
-	var _components = __webpack_require__(25);
+	var _components = __webpack_require__(27);
 	
 	var _components2 = _interopRequireDefault(_components);
 	
-	var _services = __webpack_require__(40);
+	var _services = __webpack_require__(45);
 	
 	var _services2 = _interopRequireDefault(_services);
 	
@@ -82,10 +84,10 @@
 	
 	// Config
 	
-	var ngModule = angular.module('thinker.app', ['ui.router', 'ngMaterial', _components2.default.name, _services2.default.name]);
-	
 	// Style
 	// Vendor
+	
+	var ngModule = angular.module('thinker.app', ['ui.router', 'ngMaterial', _components2.default.name, _services2.default.name]);
 	
 	ngModule.config(_config2.default);
 	
@@ -71268,41 +71270,81 @@
 /* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(16);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(14)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../node_modules/css-loader/index.js!./../node_modules/sass-loader/index.js!./thinker.scss", function() {
+				var newContent = require("!!./../node_modules/css-loader/index.js!./../node_modules/sass-loader/index.js!./thinker.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(13)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, ".history-listing {\n  height: 400px;\n  overflow-y: scroll;\n  padding-bottom: 5px; }\n", ""]);
+	
+	// exports
+
+
+/***/ },
+/* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
 	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 	
-	var _create = __webpack_require__(16);
+	var _create = __webpack_require__(18);
 	
 	var _create2 = _interopRequireDefault(_create);
 	
-	var _create3 = __webpack_require__(17);
+	var _create3 = __webpack_require__(19);
 	
 	var _create4 = _interopRequireDefault(_create3);
 	
-	var _game = __webpack_require__(18);
+	var _game = __webpack_require__(20);
 	
 	var _game2 = _interopRequireDefault(_game);
 	
-	var _game3 = __webpack_require__(19);
+	var _game3 = __webpack_require__(21);
 	
 	var _game4 = _interopRequireDefault(_game3);
 	
-	var _home = __webpack_require__(20);
+	var _home = __webpack_require__(22);
 	
 	var _home2 = _interopRequireDefault(_home);
 	
-	var _home3 = __webpack_require__(21);
+	var _home3 = __webpack_require__(23);
 	
 	var _home4 = _interopRequireDefault(_home3);
 	
-	var _login = __webpack_require__(22);
+	var _login = __webpack_require__(24);
 	
 	var _login2 = _interopRequireDefault(_login);
 	
-	var _login3 = __webpack_require__(23);
+	var _login3 = __webpack_require__(25);
 	
 	var _login4 = _interopRequireDefault(_login3);
 	
@@ -71355,13 +71397,13 @@
 	exports.default = Config;
 
 /***/ },
-/* 16 */
+/* 18 */
 /***/ function(module, exports) {
 
 	module.exports = "<md-card class=\"md-whiteframe-14dp\">\n    <md-card-title>\n        <md-card-title-text>\n            <span class=\"md-headline\">Enter your question to start the game.</span>\n        </md-card-title-text>\n    </md-card-title>\n    <md-card-content>\n        <form name=\"vm.question\">\n            <md-input-container>\n                <label>Question</label>\n                <input type=\"text\" required name=\"questionText\" id=\"questionText\" ng-model=\"vm.questionText\">\n            </md-input-container>\n        </form>\n    </md-card-content>\n    <md-card-actions>\n        <md-button ng-class=\"{disabled: vm.question.questionText.$invalid}\"\n            ng-disabled=\"vm.question.questionText.$invalid\"\n            ng-click=\"vm.createGame()\">Create</md-button>\n    </md-card-actions>\n</md-card>"
 
 /***/ },
-/* 17 */
+/* 19 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -71410,13 +71452,13 @@
 	exports.default = CreateGameController;
 
 /***/ },
-/* 18 */
+/* 20 */
 /***/ function(module, exports) {
 
-	module.exports = "<div ng-if=\"vm.gameLoaded && vm.game.inProgress\">\n    <game-question game=\"vm.game\"></game-question>\n    <game-guesser game=\"vm.game\" guesser-number=\"0\"></game-guesser>\n    <game-guesser game=\"vm.game\" guesser-number=\"1\"></game-guesser>\n</div>\n<div ng-if=\"vm.gameLoaded && !vm.game.inProgress\">\n     <game-over game=\"vm.game\"></game-over>\n</div>\n<div ng-if=\"!vm.gameLoaded\">\n    <h2>Loading...</h2>\n    <md-progress-linear md-mode=\"indeterminate\"></md-progress-linear>\n</div>"
+	module.exports = "<div layout=\"row\"\" layout-xs=\"column\" ng-if=\"vm.gameLoaded\">\n    <div flex-gt-xs=65 flex>\n        <div ng-if=\"vm.gameLoaded && vm.game.inProgress\">\n            <game-question game=\"vm.game\"></game-question>\n            <game-guesser game=\"vm.game\" guesser-number=\"0\"></game-guesser>\n            <game-guesser game=\"vm.game\" guesser-number=\"1\"></game-guesser>\n        </div>\n        <div ng-if=\"vm.gameLoaded && !vm.game.inProgress\">\n            <game-over game=\"vm.game\"></game-over>\n        </div>\n    </div>\n    <div flex-gt-xs=35 flex>\n        <game-history game=\"vm.game\"></game-history>\n    </div>\n</div>\n<div ng-if=\"!vm.gameLoaded\">\n    <h2>Loading...</h2>\n    <md-progress-linear md-mode=\"indeterminate\"></md-progress-linear>\n</div>"
 
 /***/ },
-/* 19 */
+/* 21 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -71459,13 +71501,13 @@
 	exports.default = GameController;
 
 /***/ },
-/* 20 */
+/* 22 */
 /***/ function(module, exports) {
 
 	module.exports = "<md-card class=\"md-whiteframe-14dp\">\n    <md-card-title>\n        <md-card-title-text>\n            <span class=\"md-headline\">Welcome to Thinker</span>\n        </md-card-title-text>\n    </md-card-title>\n    <md-card-content>\n        <p>Would you like to start a game?</p>\n        <p>Join below</p>\n    </md-card-content>\n    <md-card-actions>\n        <md-button ui-sref=\"create\" class=\"md-raised md-primary\">Start</md-button>\n    </md-card-actions>\n</md-card>"
 
 /***/ },
-/* 21 */
+/* 23 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -71485,13 +71527,13 @@
 	exports.default = HomeController;
 
 /***/ },
-/* 22 */
+/* 24 */
 /***/ function(module, exports) {
 
 	module.exports = "<md-card class=\"md-whiteframe-14dp\">\n    <md-card-title>\n        <md-card-title-text>\n            <span class=\"md-headline\">Login to Thinker</span>\n        </md-card-title-text>\n    </md-card-title>\n\n    <md-card-actions>\n        <md-button class=\"md-raised md-primary\" ng-click=\"vm.login()\">Login With Twitter</md-button>\n    </md-card-actions>\n</md-card>"
 
 /***/ },
-/* 23 */
+/* 25 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -71543,7 +71585,7 @@
 	exports.default = LoginController;
 
 /***/ },
-/* 24 */
+/* 26 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -71566,7 +71608,7 @@
 	exports.default = run;
 
 /***/ },
-/* 25 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -71579,11 +71621,11 @@
 	
 	var angular = _interopRequireWildcard(_angular);
 	
-	var _game = __webpack_require__(26);
+	var _game = __webpack_require__(28);
 	
 	var _game2 = _interopRequireDefault(_game);
 	
-	var _toolbar = __webpack_require__(36);
+	var _toolbar = __webpack_require__(41);
 	
 	var _toolbar2 = _interopRequireDefault(_toolbar);
 	
@@ -71596,7 +71638,7 @@
 	exports.default = componentModule;
 
 /***/ },
-/* 26 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -71609,17 +71651,21 @@
 	
 	var angular = _interopRequireWildcard(_angular);
 	
-	var _question = __webpack_require__(27);
+	var _question = __webpack_require__(29);
 	
 	var _question2 = _interopRequireDefault(_question);
 	
-	var _guesser = __webpack_require__(30);
+	var _guesser = __webpack_require__(32);
 	
 	var _guesser2 = _interopRequireDefault(_guesser);
 	
-	var _gameOver = __webpack_require__(33);
+	var _gameOver = __webpack_require__(35);
 	
 	var _gameOver2 = _interopRequireDefault(_gameOver);
+	
+	var _history = __webpack_require__(38);
+	
+	var _history2 = _interopRequireDefault(_history);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -71630,11 +71676,12 @@
 	gameComponentModule.directive('gameQuestion', _question2.default);
 	gameComponentModule.directive('gameGuesser', _guesser2.default);
 	gameComponentModule.directive('gameOver', _gameOver2.default);
+	gameComponentModule.directive('gameHistory', _history2.default);
 	
 	exports.default = gameComponentModule;
 
 /***/ },
-/* 27 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -71643,11 +71690,11 @@
 	    value: true
 	});
 	
-	var _question = __webpack_require__(28);
+	var _question = __webpack_require__(30);
 	
 	var _question2 = _interopRequireDefault(_question);
 	
-	var _question3 = __webpack_require__(29);
+	var _question3 = __webpack_require__(31);
 	
 	var _question4 = _interopRequireDefault(_question3);
 	
@@ -71669,13 +71716,13 @@
 	exports.default = questionComponent;
 
 /***/ },
-/* 28 */
+/* 30 */
 /***/ function(module, exports) {
 
 	module.exports = "<md-card class=\"md-whiteframe-15dp\">\n    <md-card-header ng-if=\"vm.game.answer.user\">\n        <md-card-avatar>\n            <img class=\"md-user-avatar\" ng-src=\"{{ vm.game.answer.user.profileImage }}\"/>\n        </md-card-avatar>\n        <md-card-header-text>\n            <span class=\"md-title\">{{ vm.game.answer.user.username }}</span>\n            <span class=\"md-subhead\">Answering</span>\n        </md-card-header-text>\n    </md-card-header>\n    <md-card-title>\n        <md-card-title-text>\n            <span class=\"md-display-2\">{{vm.game.question}}</span>\n            <span class=\"md-subhead\">Question</span>\n        </md-card-title-text>\n    </md-card-title>\n    <!-- Game has been answered -->\n    <div ng-if=\"vm.game.answer.value\">\n        <md-card-content>\n            Answered\n        </md-card-content>\n    </div>\n    <!-- Game has not been answered -->\n    <div ng-if=\"!vm.game.answer.value\">\n        <!-- User can answer -->\n        <div ng-if=\"vm.canAnswer\">\n            <!-- User is answering -->\n            <div ng-if=\"vm.answering\">\n                <md-card-content>\n                    <form name=\"vm.form\">\n                        <md-input-container>\n                            <label>Answer</label>\n                            <input type=\"number\" required name=\"questionAnswer\" id=\"questionAnswer\" ng-model=\"vm.questionAnswer\">\n                        </md-input-container>\n                    </form>\n                </md-card-content>\n                <md-card-actions layout=\"row\" layout-align=\"start\">\n                    <md-button class=\"md-raised md-primary\" ng-class=\"{disabled: vm.form.questionAnswer.$invalid}\"\n                        ng-disabled=\"vm.form.questionAnswer.$invalid\"\n                        ng-click=\"vm.saveAnswer()\">Save</md-button>\n                </md-card-actions>\n            </div>\n            <!-- User is not answering -->\n            <div ng-if=\"!vm.answering\">\n                <md-card-actions layout=\"row\" layout-align=\"start\">\n                    <md-button class=\"md-raised md-primary\"\n                        ng-click=\"vm.startAnswer()\">Answer Question</md-button>\n                </md-card-actions>\n            </div>\n        </div>\n        <!-- User cannot answer and hasn't been answered-->\n        <div ng-if=\"!vm.canAnswer\">\n            <md-card-content>\n                <span class=\"md-headline\">Waiting on answer</span>\n            </md-card-content>\n        </div>\n    </div>\n</md-card>\n"
 
 /***/ },
-/* 29 */
+/* 31 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -71726,7 +71773,7 @@
 	exports.default = QuestionController;
 
 /***/ },
-/* 30 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -71735,11 +71782,11 @@
 	    value: true
 	});
 	
-	var _guesser = __webpack_require__(31);
+	var _guesser = __webpack_require__(33);
 	
 	var _guesser2 = _interopRequireDefault(_guesser);
 	
-	var _guesser3 = __webpack_require__(32);
+	var _guesser3 = __webpack_require__(34);
 	
 	var _guesser4 = _interopRequireDefault(_guesser3);
 	
@@ -71762,13 +71809,13 @@
 	exports.default = guesserComponent;
 
 /***/ },
-/* 31 */
+/* 33 */
 /***/ function(module, exports) {
 
 	module.exports = "<md-card class=\"md-whiteframe-15dp\">\n    <md-card-header ng-if=\"vm.guesser.user\">\n        <md-card-avatar>\n            <img class=\"md-user-avatar\" ng-src=\"{{ vm.guesser.user.profileImage }}\"/>\n        </md-card-avatar>\n        <md-card-header-text>\n            <span class=\"md-title\">{{ vm.guesser.user.username }}</span>\n            <span class=\"md-subhead\">Guessing</span>\n        </md-card-header-text>\n    </md-card-header>\n    <md-card-header ng-if=\"!vm.guesser.user\">\n        <md-card-header-text>\n            <span class=\"md-title\">Waiting...</span>\n            <span class=\"md-subhead\">Guessing</span>\n        </md-card-header-text>\n    </md-card-header>\n    <!-- Guess states:\n        1) No user, can join = Join Button\n        2) No user, cannot join = Waiting on guesser\n        3) Other user, waiting on answer = Waiting on answer\n        4) Current user, waiting on answer = Waiting on answer\n        5) Other user, waiting to guess = Waiting for user\n        6) Current user, waiting to guess = Waiting for user\n        7) Other user, currently guessing = User guessing\n        8) Current user, currently guessing = Enter Guess\n        -->\n\n    <!-- State: Has user -->\n    <div ng-if=\"vm.guesser.user\">\n        <!-- State: No Answer -->\n        <div ng-if=\"!vm.game.answer.value\">\n            <md-card-content>\n                <span class=\"md-headline\">Waiting on answer</span>\n            </md-card-content>\n        </div>\n        <!-- State: Has Answer -->\n        <div ng-if=\"vm.game.answer.value\">\n            <!-- State: Waiting to guess -->\n            <div ng-if=\"!vm.guesser.active\">\n                <md-card-content>\n                    <span class=\"md-headline\">Waiting for other guesser.</span>\n                </md-card-content>\n            </div>\n            <!-- State: Guessing -->\n            <div ng-if=\"vm.guesser.active\">\n                <!-- State: Not current user -->\n                <div ng-if=\"vm.guesser.user.userID !== vm.UserService.currentUser.user.userID\">\n                    <md-card-content>\n                        <span class=\"md-headline\">Currently guessing</span>\n                    </md-card-content>\n                </div>\n                <!-- State: Is current user -->\n                <div ng-if=\"vm.guesser.user.userID === vm.UserService.currentUser.user.userID\">\n                    <md-card-content>\n                        <form name=\"vm.form\">\n                            <md-input-container>\n                                <label>Guess: Currently {{vm.game.currentGuess}}</label>\n                                <input\n                                    type=\"number\"\n                                    required\n                                    name=\"guess\"\n                                    id=\"guess\"\n                                    ng-model=\"vm.guess\"\n                                    min=\"{{vm.game.currentGuess + 1}}\" \n                                    />\n                            </md-input-container>\n                        </form>\n                    </md-card-content>\n                    <md-card-actions layout=\"row\" layout-align=\"start\">\n                        <md-button class=\"md-raised md-primary\" ng-class=\"{disabled: vm.form.guess.$invalid}\"\n                            ng-disabled=\"vm.form.guess.$invalid\"\n                            ng-click=\"vm.saveGuess()\">Save</md-button>\n                        <md-button class=\"md-raised md-warning\"\n                            ng-click=\"vm.lowerGuess()\">Lower!</md-button>\n                    </md-card-actions>\n                </div>\n            </div>\n        </div>\n    </div>\n    <!-- State: No user -->\n    <div ng-if=\"!vm.guesser.user\">\n        <div ng-if=\"vm.canJoin\">\n            <md-card-actions layout=\"row\" layout-align=\"start\">\n                <md-button class=\"md-raised md-primary\" ng-click=\"vm.joinAsGuesser()\">\n                    Join\n                </md-button>\n            </md-card-actions>\n        </div>\n        <div ng-if=\"!vm.canJoin\">\n            <md-card-content>\n                <span class=\"md-headline\">Waiting on guesser to join</span>\n            </md-card-content>\n        </div>\n    </div>\n</md-card>"
 
 /***/ },
-/* 32 */
+/* 34 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -71800,14 +71847,13 @@
 	            this.GameService.guesserObject(this.game, this.guesserNumber).then(function (guesser) {
 	                _this.guesser = guesser;
 	            });
-	            this.canJoin = !this.GameService.userInGame(this.game, this.UserService.currentUser.user);
+	            this.canJoin = !this.GameService.userInGame(this.game, this.UserService.currentUser.user) && this.UserService.isLoggedIn;
 	        }
 	    }, {
 	        key: 'joinAsGuesser',
 	        value: function joinAsGuesser() {
-	            this.game.guessers[this.guesserNumber].user = this.UserService.currentUser.user;
 	            this.guesser.user = this.UserService.currentUser.user;
-	            return this.GameService.stepGame(this.game);
+	            return this.GameService.joinGuesser(this.game, this.guesserNumber, this.UserService.currentUser.user);
 	        }
 	    }, {
 	        key: 'saveGuess',
@@ -71838,7 +71884,7 @@
 	exports.default = GuesserController;
 
 /***/ },
-/* 33 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -71847,11 +71893,11 @@
 	    value: true
 	});
 	
-	var _gameOver = __webpack_require__(34);
+	var _gameOver = __webpack_require__(36);
 	
 	var _gameOver2 = _interopRequireDefault(_gameOver);
 	
-	var _gameOver3 = __webpack_require__(35);
+	var _gameOver3 = __webpack_require__(37);
 	
 	var _gameOver4 = _interopRequireDefault(_gameOver3);
 	
@@ -71873,13 +71919,13 @@
 	exports.default = gameOverComponent;
 
 /***/ },
-/* 34 */
+/* 36 */
 /***/ function(module, exports) {
 
 	module.exports = "<md-card class=\"md-whiteframe-15dp\">\n    <md-card-header>\n        <md-card-header-text>\n            <span class=\"md-title\">Game Over!</span>\n        </md-card-header-text>\n    </md-card-header>\n    <md-card-content>\n        <md-list>\n            <md-subheader class=\"md-no-sticky\">Question</md-subheader>\n            <md-list-item>\n                <div class=\"md-list-item-text\">\n                    <h3>\"{{ ::vm.game.question }}\"</h3>\n                </div>\n            </md-list-item>\n            <md-divider></md-divider>\n            <md-subheader class=\"md-no-sticky\">Answer</md-subheader>\n            <md-list-item class=\"md-2-line\">\n                <img ng-src=\"{{ ::vm.game.answer.user.profileImage }}\" class=\"md-avatar\" alt=\"{{::vm.game.answer.user.username}}\" />\n                <div class=\"md-list-item-text\" layout=\"column\">\n                    <h3>\"{{ ::vm.game.answer.value }}\"</h3>\n                    <h4>{{ ::vm.game.answer.user.username }}</h4>\n                </div>\n            </md-list-item>\n            <md-divider></md-divider>\n            <md-subheader class=\"md-no-sticky\">Guessers</md-subheader>\n            <md-list-item class=\"md-3-line\" ng-repeat=\"guesser in vm.game.guessers\">\n                <img ng-src=\"{{ ::guesser.user.profileImage }}\" class=\"md-avatar\" alt=\"{{::guesser.user.username}}\" />\n                <div class=\"md-list-item-text\" layout=\"column\">\n                    <div ng-if=\"guesser.user.userID === vm.game.winner.user.userID\">\n                        <h3>Winner!</h3>\n                        <h4>{{ ::guesser.user.username }}</h4>\n                        <p>{{ ::vm.game.winngingGuess }}</p>\n                    </div>\n                    <div ng-if=\"guesser.user.userID !== vm.game.winner.user.userID\">\n                        <h3>Loser!</h3>\n                        <h4>{{ ::guesser.user.username }}</h4>\n                        <p>Last Guess: {{ ::guesser.guess }}</p>\n                    </div>\n                </div>\n            </md-list-item>\n    </md-card-content>\n</md-card>"
 
 /***/ },
-/* 35 */
+/* 37 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -71899,7 +71945,91 @@
 	exports.default = GameOverController;
 
 /***/ },
-/* 36 */
+/* 38 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _history = __webpack_require__(39);
+	
+	var _history2 = _interopRequireDefault(_history);
+	
+	var _history3 = __webpack_require__(40);
+	
+	var _history4 = _interopRequireDefault(_history3);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var historyComponent = function historyComponent() {
+	    return {
+	        restrict: 'E',
+	        scope: {
+	            game: '='
+	        },
+	        template: _history2.default,
+	        controller: _history4.default,
+	        controllerAs: 'vm',
+	        bindToController: true
+	    };
+	};
+	
+	exports.default = historyComponent;
+
+/***/ },
+/* 39 */
+/***/ function(module, exports) {
+
+	module.exports = "<md-card class=\"md-whiteframe-15dp\">\n    <md-card-content ng-class=\"{'history-listing': vm.$mdMedia('gt-xs')}\">\n        <md-list>\n            <md-subheader class=\"md-no-sticky\">Game History</md-subheader>\n            <md-list-item class=\"md-2-line\" ng-repeat=\"history in vm.gameHistory\">\n                <img ng-src=\"{{history.user.profileImage}}\" class=\"md-avatar\" alt=\"{{history.user.username}}\" />\n                <div class=\"md-list-item-text\">\n                    <h3>{{ history.user.username }}</h3>\n                    <p>{{ history.event }}</p>\n                </div>\n            </md-list-item>\n        </md-list>\n    </md-card-content>\n</md-card>"
+
+/***/ },
+/* 40 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var HistoryController = (function () {
+	    function HistoryController(GameService, $mdMedia) {
+	        _classCallCheck(this, HistoryController);
+	
+	        this.name = 'HistoryController';
+	        this.GameService = GameService;
+	        this.$mdMedia = $mdMedia;
+	
+	        this.activate();
+	    }
+	
+	    _createClass(HistoryController, [{
+	        key: 'activate',
+	        value: function activate() {
+	            var _this = this;
+	
+	            this.GameService.gameHistory(this.game).then(function (gameHistory) {
+	                _this.gameHistory = gameHistory;
+	            });
+	        }
+	    }]);
+	
+	    return HistoryController;
+	})();
+	
+	HistoryController.$inject = ['GameService', '$mdMedia'];
+	
+	exports.default = HistoryController;
+
+/***/ },
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -71912,7 +72042,7 @@
 	
 	var angular = _interopRequireWildcard(_angular);
 	
-	var _toolbar = __webpack_require__(37);
+	var _toolbar = __webpack_require__(42);
 	
 	var _toolbar2 = _interopRequireDefault(_toolbar);
 	
@@ -71927,7 +72057,7 @@
 	exports.default = toolbarComponentModule;
 
 /***/ },
-/* 37 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -71936,11 +72066,11 @@
 	    value: true
 	});
 	
-	var _toolbar = __webpack_require__(38);
+	var _toolbar = __webpack_require__(43);
 	
 	var _toolbar2 = _interopRequireDefault(_toolbar);
 	
-	var _toolbar3 = __webpack_require__(39);
+	var _toolbar3 = __webpack_require__(44);
 	
 	var _toolbar4 = _interopRequireDefault(_toolbar3);
 	
@@ -71960,13 +72090,13 @@
 	exports.default = toolbarComponent;
 
 /***/ },
-/* 38 */
+/* 43 */
 /***/ function(module, exports) {
 
 	module.exports = "<md-toolbar>\n    <div class=\"md-toolbar-tools\">\n        <span>\n            <i class=\"material-icons\">trending_down</i>Thinker\n        </span>\n        <span flex></span>\n        <span ng-if=\"!vm.currentUser.isLoggedIn\">\n            <md-button ui-sref=\"login\">Login</md-button>\n        </span>\n        <span ng-if=\"vm.currentUser.isLoggedIn\">\n            {{ vm.currentUser.user.username }}\n            <md-button ng-click=\"vm.logout()\">Logout</md-button>\n        </span>\n    </div>\n</md-toolbar>"
 
 /***/ },
-/* 39 */
+/* 44 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -72026,7 +72156,7 @@
 	exports.default = ToolbarController;
 
 /***/ },
-/* 40 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -72039,17 +72169,17 @@
 	
 	var angular = _interopRequireWildcard(_angular);
 	
-	__webpack_require__(41);
+	__webpack_require__(46);
 	
-	var _game = __webpack_require__(43);
+	var _game = __webpack_require__(48);
 	
 	var _game2 = _interopRequireDefault(_game);
 	
-	var _user = __webpack_require__(44);
+	var _user = __webpack_require__(49);
 	
 	var _user2 = _interopRequireDefault(_user);
 	
-	var _firebase = __webpack_require__(45);
+	var _firebase = __webpack_require__(50);
 	
 	var _firebase2 = _interopRequireDefault(_firebase);
 	
@@ -72066,15 +72196,15 @@
 	exports.default = servicesModule;
 
 /***/ },
-/* 41 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(42);
+	__webpack_require__(47);
 	module.exports = 'firebase';
 
 
 /***/ },
-/* 42 */
+/* 47 */
 /***/ function(module, exports) {
 
 	/*!
@@ -74357,7 +74487,7 @@
 
 
 /***/ },
-/* 43 */
+/* 48 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -74369,6 +74499,13 @@
 	});
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var GameHistoryObject = function GameHistoryObject(user, event) {
+	    _classCallCheck(this, GameHistoryObject);
+	
+	    this.user = user;
+	    this.event = event;
+	};
 	
 	var GameObject = function GameObject() {
 	    _classCallCheck(this, GameObject);
@@ -74412,10 +74549,15 @@
 	    }, {
 	        key: 'createGame',
 	        value: function createGame(gameQuestion) {
+	            var _this = this;
+	
 	            var currentGame = this.buildNewGame(gameQuestion);
 	            return this.FirebaseService.createNewGame(currentGame).then(function (game) {
 	                game.gameID = game.$id;
 	                game.$save();
+	                return game;
+	            }).then(function (game) {
+	                _this.addHistoryToGame(game, _this.UserService.currentUser.user, 'Created Game');
 	                return game;
 	            });
 	        }
@@ -74436,6 +74578,7 @@
 	        value: function saveAnswer(game, answer) {
 	            game.answer.value = answer;
 	            game.answer.user = this.UserService.currentUser.user;
+	            this.addHistoryToGame(game, this.UserService.currentUser.user, 'Answered question.');
 	            return this.stepGame(game);
 	        }
 	    }, {
@@ -74466,6 +74609,13 @@
 	            return this.FirebaseService.guesserObject(game, guesserNumber);
 	        }
 	    }, {
+	        key: 'joinGuesser',
+	        value: function joinGuesser(game, guesserNumber, user) {
+	            game.guessers[guesserNumber].user = user;
+	            this.addHistoryToGame(game, user, 'Joined as guesser');
+	            return this.stepGame(game);
+	        }
+	    }, {
 	        key: 'activeUserForGame',
 	        value: function activeUserForGame(game) {
 	            return game.guessers.find(function (guesser) {
@@ -74487,6 +74637,7 @@
 	            currentGuesser.guess = guess;
 	            nextGuesser.active = true;
 	            game.currentGuess = guess;
+	            this.addHistoryToGame(game, currentGuesser.user, 'Guessed: ' + guess);
 	            return game.$save();
 	        }
 	    }, {
@@ -74495,6 +74646,7 @@
 	            var currentGuesser = game.guessers[guesserNumber];
 	            var lastGuesserNumber = guesserNumber === 0 ? 1 : 0;
 	            var lastGuesser = game.guessers[lastGuesserNumber];
+	            this.addHistoryToGame(game, currentGuesser.user, 'Guessed lower than ' + game.currentGuess);
 	            if (game.answer.value < game.currentGuess) {
 	                game.winner = currentGuesser;
 	                game.winningGuess = 'Lower than ' + game.currentGuess;
@@ -74502,6 +74654,7 @@
 	                game.winner = lastGuesser;
 	                game.winngingGuess = 'Guess of ' + game.currentGuess;
 	            }
+	            this.addHistoryToGame(game, game.winner.user, 'Won with: ' + game.winningGuess);
 	            return this.endGame(game);
 	        }
 	
@@ -74543,6 +74696,19 @@
 	            game.inProgress = false;
 	            return game.$save();
 	        }
+	    }, {
+	        key: 'gameHistory',
+	        value: function gameHistory(game) {
+	            return this.FirebaseService.gameHistory(game);
+	        }
+	    }, {
+	        key: 'addHistoryToGame',
+	        value: function addHistoryToGame(game, user, event) {
+	            var historyItem = new GameHistoryObject(user, event);
+	            return this.gameHistory(game).then(function (gameHistory) {
+	                return gameHistory.$add(historyItem);
+	            });
+	        }
 	    }]);
 	
 	    return GameService;
@@ -74553,7 +74719,7 @@
 	exports.default = GameService;
 
 /***/ },
-/* 44 */
+/* 49 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -74584,6 +74750,7 @@
 	    _createClass(UserService, [{
 	        key: 'userLoggedIn',
 	        value: function userLoggedIn(user) {
+	            this.isLoggedIn = true;
 	            this.currentUser.user = user;
 	            this.currentUser.isLoggedIn = true;
 	            this.$rootScope.$broadcast(this.broadcast);
@@ -74591,6 +74758,7 @@
 	    }, {
 	        key: 'userLoggedOut',
 	        value: function userLoggedOut() {
+	            this.isLoggedIn = false;
 	            this.currentUser.user = false;
 	            this.currentUser.isLoggedIn = false;
 	            this.$rootScope.$broadcast(this.broadcast);
@@ -74639,7 +74807,7 @@
 	exports.default = UserService;
 
 /***/ },
-/* 45 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -74650,11 +74818,11 @@
 	    value: true
 	});
 	
-	var _firebase = __webpack_require__(46);
+	var _firebase = __webpack_require__(51);
 	
 	var _firebase2 = _interopRequireDefault(_firebase);
 	
-	var _user = __webpack_require__(47);
+	var _user = __webpack_require__(52);
 	
 	var _user2 = _interopRequireDefault(_user);
 	
@@ -74671,6 +74839,7 @@
 	        this.$firebaseArray = $firebaseArray;
 	        this.firebaseRef = new _firebase2.default('https://thinker.firebaseio.com');
 	        this.gamesRef = this.firebaseRef.child('games');
+	        this.gameHistoryRef = this.firebaseRef.child('gameHistory');
 	        this.auth = $firebaseAuth(this.firebaseRef);
 	    }
 	
@@ -74759,6 +74928,12 @@
 	            var guesser = this.$firebaseObject(this.gamesRef.child(gameID).child('guessers').child(guesserNumber));
 	            return guesser.$loaded();
 	        }
+	    }, {
+	        key: 'gameHistory',
+	        value: function gameHistory(game) {
+	            var history = this.$firebaseArray(this.gameHistoryRef.child(game.$id));
+	            return history.$loaded();
+	        }
 	    }]);
 	
 	    return FirebaseService;
@@ -74769,7 +74944,7 @@
 	exports.default = FirebaseService;
 
 /***/ },
-/* 46 */
+/* 51 */
 /***/ function(module, exports) {
 
 	/*! @license Firebase v2.3.2
@@ -75043,7 +75218,7 @@
 
 
 /***/ },
-/* 47 */
+/* 52 */
 /***/ function(module, exports) {
 
 	"use strict";

@@ -12,12 +12,14 @@ class UserService {
     }
 
     userLoggedIn(user) {
+        this.isLoggedIn = true;
         this.currentUser.user = user;
         this.currentUser.isLoggedIn = true;
         this.$rootScope.$broadcast(this.broadcast);
     }
 
     userLoggedOut() {
+        this.isLoggedIn = false;
         this.currentUser.user = false;
         this.currentUser.isLoggedIn = false;
         this.$rootScope.$broadcast(this.broadcast);

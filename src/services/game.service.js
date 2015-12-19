@@ -73,6 +73,7 @@ class GameService {
     saveAnswer(game, answer) {
         game.answer.value = answer;
         game.answer.user = this.UserService.currentUser.user;
+        this.addHistoryToGame(game, this.UserService.currentUser.user, 'Answered question.');
         return this.stepGame(game);
     }
 
@@ -101,6 +102,12 @@ class GameService {
         return this.FirebaseService.guesserObject(game, guesserNumber);
     }
 
+    joinGuesser(game, guesserNumber, user) {
+        game.guessers[guesserNumber].user = user;
+        this.addHistoryToGame(game, user, 'Joined as guesser');
+        return this.stepGame(game);
+    }
+
     activeUserForGame(game) {
         return game.guessers.find((guesser) => {
             return guesser.active;
@@ -118,6 +125,7 @@ class GameService {
         currentGuesser.guess = guess;
         nextGuesser.active = true;
         game.currentGuess = guess;
+        this.addHistoryToGame(game, currentGuesser.user, 'Guessed: ' + guess);
         return game.$save();
     }
 
@@ -125,6 +133,7 @@ class GameService {
         const currentGuesser = game.guessers[guesserNumber];
         const lastGuesserNumber = guesserNumber === 0 ? 1 : 0;
         const lastGuesser = game.guessers[lastGuesserNumber];
+        this.addHistoryToGame(game, currentGuesser.user, 'Guessed lower than ' + game.currentGuess);
         if (game.answer.value < game.currentGuess) {
             game.winner = currentGuesser;
             game.winningGuess = 'Lower than ' + game.currentGuess;
@@ -132,6 +141,7 @@ class GameService {
             game.winner = lastGuesser;
             game.winngingGuess = 'Guess of ' + game.currentGuess;
         }
+        this.addHistoryToGame(game, game.winner.user, 'Won with: ' + game.winningGuess);
         return this.endGame(game);
     }
 
@@ -169,10 +179,14 @@ class GameService {
         return game.$save();
     }
 
+    gameHistory(game) {
+        return this.FirebaseService
+            .gameHistory(game);
+    }
+
     addHistoryToGame(game, user, event) {
         const historyItem = new GameHistoryObject(user, event);
-        return this.FirebaseService
-            .gameHistory(game)
+        return this.gameHistory(game)
             .then((gameHistory) => {
                 return gameHistory.$add(historyItem);
             });

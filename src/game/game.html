@@ -1,10 +1,17 @@
-<div ng-if="vm.gameLoaded && vm.game.inProgress">
-    <game-question game="vm.game"></game-question>
-    <game-guesser game="vm.game" guesser-number="0"></game-guesser>
-    <game-guesser game="vm.game" guesser-number="1"></game-guesser>
-</div>
-<div ng-if="vm.gameLoaded && !vm.game.inProgress">
-     <game-over game="vm.game"></game-over>
+<div layout="row"" layout-xs="column" ng-if="vm.gameLoaded">
+    <div flex-gt-xs=65 flex>
+        <div ng-if="vm.gameLoaded && vm.game.inProgress">
+            <game-question game="vm.game"></game-question>
+            <game-guesser game="vm.game" guesser-number="0"></game-guesser>
+            <game-guesser game="vm.game" guesser-number="1"></game-guesser>
+        </div>
+        <div ng-if="vm.gameLoaded && !vm.game.inProgress">
+            <game-over game="vm.game"></game-over>
+        </div>
+    </div>
+    <div flex-gt-xs=35 flex>
+        <game-history game="vm.game"></game-history>
+    </div>
 </div>
 <div ng-if="!vm.gameLoaded">
     <h2>Loading...</h2>

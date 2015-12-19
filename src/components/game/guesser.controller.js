@@ -11,13 +11,12 @@ class GuesserController {
         this.GameService.guesserObject(this.game, this.guesserNumber).then((guesser) => {
             this.guesser = guesser;
         });
-        this.canJoin = !this.GameService.userInGame(this.game, this.UserService.currentUser.user);
+        this.canJoin = (!this.GameService.userInGame(this.game, this.UserService.currentUser.user) && this.UserService.isLoggedIn);
     }
 
     joinAsGuesser() {
-        this.game.guessers[this.guesserNumber].user = this.UserService.currentUser.user;
         this.guesser.user = this.UserService.currentUser.user;
-        return this.GameService.stepGame(this.game);
+        return this.GameService.joinGuesser(this.game, this.guesserNumber, this.UserService.currentUser.user);
     }
 
     saveGuess() {

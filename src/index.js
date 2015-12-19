@@ -6,6 +6,7 @@ import 'angular-material';
 
 // Style
 import '../node_modules/angular-material/angular-material.css';
+import './thinker.scss';
 
 // Config
 import Config from './config';

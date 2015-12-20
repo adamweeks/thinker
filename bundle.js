@@ -71301,7 +71301,7 @@
 	
 	
 	// module
-	exports.push([module.id, ".history-listing {\n  height: 400px;\n  overflow-y: scroll;\n  padding-bottom: 5px; }\n", ""]);
+	exports.push([module.id, ".history-listing {\n  height: 400px;\n  overflow-y: scroll;\n  padding-bottom: 5px; }\n\n#main-content {\n  height: 100%; }\n", ""]);
 	
 	// exports
 
@@ -71400,7 +71400,7 @@
 /* 18 */
 /***/ function(module, exports) {
 
-	module.exports = "<md-card class=\"md-whiteframe-14dp\">\n    <md-card-title>\n        <md-card-title-text>\n            <span class=\"md-headline\">Enter your question to start the game.</span>\n        </md-card-title-text>\n    </md-card-title>\n    <md-card-content>\n        <form name=\"vm.question\">\n            <md-input-container>\n                <label>Question</label>\n                <input type=\"text\" required name=\"questionText\" id=\"questionText\" ng-model=\"vm.questionText\">\n            </md-input-container>\n        </form>\n    </md-card-content>\n    <md-card-actions>\n        <md-button ng-class=\"{disabled: vm.question.questionText.$invalid}\"\n            ng-disabled=\"vm.question.questionText.$invalid\"\n            ng-click=\"vm.createGame()\">Create</md-button>\n    </md-card-actions>\n</md-card>"
+	module.exports = "<md-card class=\"md-whiteframe-14dp\">\n    <md-card-title>\n        <md-card-title-text>\n            <span class=\"md-headline\">Enter your question to start the game.</span>\n        </md-card-title-text>\n    </md-card-title>\n    <md-card-content>\n        <form name=\"vm.question\" layout=\"row\">\n            <md-input-container flex>\n                <label>Question</label>\n                <input type=\"text\" required name=\"questionText\" id=\"questionText\" ng-model=\"vm.questionText\">\n            </md-input-container>\n        </form>\n    </md-card-content>\n    <md-card-actions>\n        <md-button ng-class=\"{disabled: vm.question.questionText.$invalid}\"\n            ng-disabled=\"vm.question.questionText.$invalid\"\n            ng-click=\"vm.createGame()\">Create</md-button>\n    </md-card-actions>\n</md-card>"
 
 /***/ },
 /* 19 */
@@ -71861,7 +71861,7 @@
 	            var _this2 = this;
 	
 	            return this.GameService.saveGuess(this.game, this.guesserNumber, this.guess).then(function () {
-	                _this2.guess = false;
+	                _this2.guess = null;
 	                _this2.guesser.active = false;
 	            });
 	        }
@@ -71983,7 +71983,7 @@
 /* 39 */
 /***/ function(module, exports) {
 
-	module.exports = "<md-card class=\"md-whiteframe-15dp\">\n    <md-card-content ng-class=\"{'history-listing': vm.$mdMedia('gt-xs')}\">\n        <md-list>\n            <md-subheader class=\"md-no-sticky\">Game History</md-subheader>\n            <md-list-item class=\"md-2-line\" ng-repeat=\"history in vm.gameHistory\">\n                <img ng-src=\"{{history.user.profileImage}}\" class=\"md-avatar\" alt=\"{{history.user.username}}\" />\n                <div class=\"md-list-item-text\">\n                    <h3>{{ history.user.username }}</h3>\n                    <p>{{ history.event }}</p>\n                </div>\n            </md-list-item>\n        </md-list>\n    </md-card-content>\n</md-card>"
+	module.exports = "<md-card class=\"md-whiteframe-15dp\">\n    <md-card-content ng-class=\"{'history-listing': vm.$mdMedia('gt-xs')}\">\n        <md-list>\n            <md-subheader class=\"md-no-sticky\">Game History</md-subheader>\n            <md-list-item class=\"md-3-line\" ng-repeat=\"history in vm.gameHistory | orderBy : timestamp : true\">\n                <img ng-src=\"{{history.user.profileImage}}\" class=\"md-avatar\" alt=\"{{history.user.username}}\" />\n                <div class=\"md-list-item-text\">\n                    <h3>{{ history.user.username }}</h3>\n                    <h4>{{ history.event }}</h4>\n                    <p>{{ history.timestamp | date : 'short' }}</p>\n                </div>\n            </md-list-item>\n        </md-list>\n    </md-card-content>\n</md-card>"
 
 /***/ },
 /* 40 */
@@ -72093,7 +72093,7 @@
 /* 43 */
 /***/ function(module, exports) {
 
-	module.exports = "<md-toolbar>\n    <div class=\"md-toolbar-tools\">\n        <span>\n            <i class=\"material-icons\">trending_down</i>Thinker\n        </span>\n        <span flex></span>\n        <span ng-if=\"!vm.currentUser.isLoggedIn\">\n            <md-button ui-sref=\"login\">Login</md-button>\n        </span>\n        <span ng-if=\"vm.currentUser.isLoggedIn\">\n            {{ vm.currentUser.user.username }}\n            <md-button ng-click=\"vm.logout()\">Logout</md-button>\n        </span>\n    </div>\n</md-toolbar>"
+	module.exports = "<md-toolbar>\n    <div class=\"md-toolbar-tools\">\n        <span>\n            <a ui-sref=\"home\"><i class=\"material-icons\">trending_down</i>Thinker</a>\n        </span>\n        <span flex></span>\n        <span ng-if=\"!vm.currentUser.isLoggedIn\">\n            <md-button ui-sref=\"login\">Login</md-button>\n        </span>\n        <span ng-if=\"vm.currentUser.isLoggedIn\">\n            {{ vm.currentUser.user.username }}\n            <md-button ng-click=\"vm.logout()\">Logout</md-button>\n        </span>\n    </div>\n</md-toolbar>"
 
 /***/ },
 /* 44 */
@@ -74500,11 +74500,12 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var GameHistoryObject = function GameHistoryObject(user, event) {
+	var GameHistoryObject = function GameHistoryObject(user, event, timestamp) {
 	    _classCallCheck(this, GameHistoryObject);
 	
 	    this.user = user;
 	    this.event = event;
+	    this.timestamp = timestamp;
 	};
 	
 	var GameObject = function GameObject() {
@@ -74704,7 +74705,8 @@
 	    }, {
 	        key: 'addHistoryToGame',
 	        value: function addHistoryToGame(game, user, event) {
-	            var historyItem = new GameHistoryObject(user, event);
+	            var timestamp = this.FirebaseService.timestamp;
+	            var historyItem = new GameHistoryObject(user, event, timestamp);
 	            return this.gameHistory(game).then(function (gameHistory) {
 	                return gameHistory.$add(historyItem);
 	            });
@@ -74841,6 +74843,7 @@
 	        this.gamesRef = this.firebaseRef.child('games');
 	        this.gameHistoryRef = this.firebaseRef.child('gameHistory');
 	        this.auth = $firebaseAuth(this.firebaseRef);
+	        this.timestamp = _firebase2.default.ServerValue.TIMESTAMP;
 	    }
 	
 	    _createClass(FirebaseService, [{

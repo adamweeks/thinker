@@ -21,7 +21,7 @@ class GuesserController {
 
     saveGuess() {
         return this.GameService.saveGuess(this.game, this.guesserNumber, this.guess).then(() => {
-            this.guess = false;
+            this.guess = null;
             this.guesser.active = false;
         });
     }

@@ -1,7 +1,8 @@
 class GameHistoryObject {
-    constructor(user, event) {
+    constructor(user, event, timestamp) {
         this.user = user;
         this.event = event;
+        this.timestamp = timestamp;
     }
 }
 
@@ -185,7 +186,8 @@ class GameService {
     }
 
     addHistoryToGame(game, user, event) {
-        const historyItem = new GameHistoryObject(user, event);
+        const timestamp = this.FirebaseService.timestamp;
+        const historyItem = new GameHistoryObject(user, event, timestamp);
         return this.gameHistory(game)
             .then((gameHistory) => {
                 return gameHistory.$add(historyItem);

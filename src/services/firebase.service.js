@@ -10,6 +10,7 @@ class FirebaseService {
         this.gamesRef = this.firebaseRef.child('games');
         this.gameHistoryRef = this.firebaseRef.child('gameHistory');
         this.auth = $firebaseAuth(this.firebaseRef);
+        this.timestamp = Firebase.ServerValue.TIMESTAMP;
     }
 
     logout() {

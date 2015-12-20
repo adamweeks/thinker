@@ -2,11 +2,12 @@
     <md-card-content ng-class="{'history-listing': vm.$mdMedia('gt-xs')}">
         <md-list>
             <md-subheader class="md-no-sticky">Game History</md-subheader>
-            <md-list-item class="md-2-line" ng-repeat="history in vm.gameHistory">
+            <md-list-item class="md-3-line" ng-repeat="history in vm.gameHistory | orderBy : timestamp : true">
                 <img ng-src="{{history.user.profileImage}}" class="md-avatar" alt="{{history.user.username}}" />
                 <div class="md-list-item-text">
                     <h3>{{ history.user.username }}</h3>
-                    <p>{{ history.event }}</p>
+                    <h4>{{ history.event }}</h4>
+                    <p>{{ history.timestamp | date : 'short' }}</p>
                 </div>
             </md-list-item>
         </md-list>

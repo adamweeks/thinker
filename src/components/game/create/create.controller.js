@@ -9,7 +9,11 @@ class CreateGameController {
     }
 
     activate() {
-
+        this.sampleQuestions = [
+            'How many countries do you think border the Pacific Ocean?',
+            'How many elephants are currently in existence?',
+            'What amount of time, in minutes, would it take to eat 3 dozen donuts?',
+        ];
     }
 
     createGame() {

@@ -1,19 +1,34 @@
 <md-card class="md-whiteframe-14dp">
     <md-card-title>
         <md-card-title-text>
-            <span class="md-headline">Enter your question to start the game.</span>
+            <span class="md-headline">To start a game, enter a "How much/many?" question.</span>
+            <span class="md-subhead">This question will be answered by who you invite to the game.</span>
+            <span class="md-subhead">Guessers will then attempt to get as close to that answer as possible.</span>
         </md-card-title-text>
     </md-card-title>
     <md-card-content>
         <form name="vm.question" layout="row">
             <md-input-container flex>
                 <label>Question</label>
-                <input type="text" required name="questionText" id="questionText" ng-model="vm.questionText">
+                <input
+                    type="text"
+                    required
+                    name="questionText"
+                    id="questionText"
+                    ng-model="vm.questionText">
             </md-input-container>
         </form>
+        <md-list>
+            <md-subheader class="md-no-sticky">Suggested Questions</md-subheader>
+            <md-list-item ng-repeat="question in vm.sampleQuestions" ng-click="vm.questionText = question">
+                <p> {{ question }} </p>
+            </md-list-item>
+        </md-list>
     </md-card-content>
     <md-card-actions>
-        <md-button ng-class="{disabled: vm.question.questionText.$invalid}"
+        <md-button
+            class="md-raised md-primary"
+            ng-class="{disabled: vm.question.questionText.$invalid}"
             ng-disabled="vm.question.questionText.$invalid"
             ng-click="vm.createGame()">Create</md-button>
     </md-card-actions>

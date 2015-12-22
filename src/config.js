@@ -28,6 +28,10 @@ function Config($stateProvider, $urlRouterProvider, $locationProvider, $mdThemin
             url: '/game/:gameID',
             template: '<game></game>',
         })
+        .state('invite', {
+            url: '/invite/:gameID/:role',
+            template: 'INVITE',
+        })
         .state('login', {
             url: '/login?from',
             template: '<login></login>',

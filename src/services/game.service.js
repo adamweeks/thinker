@@ -36,9 +36,10 @@ class GameObject {
 }
 
 class GameService {
-    constructor(UserService, FirebaseService) {
+    constructor(UserService, FirebaseService, $state) {
         this.UserService = UserService;
         this.FirebaseService = FirebaseService;
+        this.$state = $state;
     }
 
     loadGame(gameID) {
@@ -193,8 +194,20 @@ class GameService {
                 return gameHistory.$add(historyItem);
             });
     }
+
+    inviteLink(game, type) {
+        return this.$state.href('invite', {'gameID': game.$id, 'role': type}, {absolute: true});
+    }
+
+    inviteAnswererLink(game) {
+        return this.inviteLink(game, 'answerer');
+    }
+
+    inviteGuesserLink(game) {
+        return this.inviteLink(game, 'guesser');
+    }
 }
 
-GameService.$inject = ['UserService', 'FirebaseService'];
+GameService.$inject = ['UserService', 'FirebaseService', '$state'];
 
 export default GameService;

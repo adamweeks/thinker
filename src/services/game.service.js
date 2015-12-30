@@ -14,8 +14,8 @@ class GameObject {
             user: false,
             value: false,
         };
-        this.inProgress = false;
-        this.started = false;
+        this.inProgress = false; // Game not ended
+        this.started = false; // Has all users and is being played
         this.creator = false;
         this.winner = false;
         this.winningGuess = false;

@@ -30,7 +30,8 @@ function Config($stateProvider, $urlRouterProvider, $locationProvider, $mdThemin
         })
         .state('invite', {
             url: '/invite/:gameID/:role',
-            template: 'INVITE',
+            template: '<invite></invite>',
+            resolve: requireAuth,
         })
         .state('login', {
             url: '/login?from',

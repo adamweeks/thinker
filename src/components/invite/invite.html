@@ -1,0 +1,57 @@
+<div ng-if="!vm.isGameLoaded">
+    <h2>Loading...</h2>
+    <md-progress-linear md-mode="indeterminate"></md-progress-linear>
+</div>
+<div layout="row"" layout-xs="column" ng-if="vm.isGameLoaded">
+    <div flex-gt-xs=65 flex>
+        <md-card class="md-whiteframe-14dp">
+            <md-card-header>
+                <md-card-avatar>
+                    <img class="md-user-avatar" ng-src="{{ vm.game.creator.profileImage }}"/>
+                </md-card-avatar>
+                <md-card-header-text>
+                    <span class="md-subhead">Invited By</span>
+                    <span class="md-title">{{ vm.game.creator.username }}</span>
+                </md-card-header-text>
+            </md-card-header>
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-headline">You have been invited to join a game:</span>
+                    <span class="md-display-2">{{vm.game.question}}</span>
+                </md-card-title-text>
+            </md-card-title>
+            <div ng-if="vm.role === 'answerer'">
+                <md-card-content>
+                    <span class="md-headline">
+                        You will be answering the question and the players will be guessing your answer.
+                    </span>
+                    <!-- User is answering -->
+                    <div ng-if="vm.answering">
+                        <form name="vm.form">
+                            <md-input-container>
+                                <label>Answer</label>
+                                <input type="number" required name="questionAnswer" id="questionAnswer" ng-model="vm.questionAnswer">
+                            </md-input-container>
+                        </form>
+                    </div>
+                </md-card-content>
+                <md-card-actions>
+                    <md-button ng-if="!vm.answering" class="md-raised md-primary" ng-click="vm.joinGame()">Join Game</md-button>
+                    <md-button ng-if="vm.answering" class="md-raised md-primary" ng-class="{disabled: vm.form.questionAnswer.$invalid}"
+                                ng-disabled="vm.form.questionAnswer.$invalid"
+                                ng-click="vm.saveAnswer()">Save</md-button>
+                </md-card-actions>
+            </div>
+            <div ng-if="vm.role === 'guesser'">
+                <md-card-content>
+                    <span class="md-headline">
+                        You will be guessing what another person's answer is.
+                    </span>
+                </md-card-content>
+                <md-card-actions>
+                    <md-button class="md-raised md-primary" ng-click="vm.joinGame()">Join Game</md-button>
+                </md-card-actions>
+            </div>
+        </md-card>
+    </div>
+</div>

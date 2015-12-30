@@ -13,11 +13,9 @@
             <md-subheader class="md-no-sticky">Answerer</md-subheader>
             <md-list-item class="md-3-line">
                 <img ng-if="vm.game.answer.user" class="md-avatar" ng-src="{{ vm.game.answer.user.profileImage }}"/>
-                <div ng-if="vm.game.answer.user">
-                    <div class="md-list-item-text" layout="column">
-                        <h3>{{ vm.game.answer.user.username }}</h3>
-                        <p class="md-subhead">Answering</p>
-                    </div>
+                <div ng-if="vm.game.answer.user" class="md-list-item-text">
+                    <h3>{{ vm.game.answer.user.username }}</h3>
+                    <p class="md-subhead">Answering</p>
                 </div>
                 <md-icon ng-if="!vm.game.answer.user" class="md-avatar-icon material-icons">trending_down</md-icon>
                 <div ng-if="!vm.game.answer.user" class="md-list-item-text" layout="column">

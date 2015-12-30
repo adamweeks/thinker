@@ -64,15 +64,15 @@
 	
 	var _config2 = _interopRequireDefault(_config);
 	
-	var _run = __webpack_require__(26);
+	var _run = __webpack_require__(18);
 	
 	var _run2 = _interopRequireDefault(_run);
 	
-	var _components = __webpack_require__(27);
+	var _components = __webpack_require__(19);
 	
 	var _components2 = _interopRequireDefault(_components);
 	
-	var _services = __webpack_require__(45);
+	var _services = __webpack_require__(55);
 	
 	var _services2 = _interopRequireDefault(_services);
 	
@@ -71301,90 +71301,53 @@
 	
 	
 	// module
-	exports.push([module.id, ".history-listing {\n  height: 400px;\n  overflow-y: scroll;\n  padding-bottom: 5px; }\n\n#main-content {\n  height: 100%; }\n", ""]);
+	exports.push([module.id, ".history-listing {\n  height: 400px;\n  overflow-y: scroll;\n  padding-bottom: 5px; }\n\n.invite-link a {\n  text-decoration: none;\n  color: white; }\n\n#main-content {\n  height: 100%; }\n", ""]);
 	
 	// exports
 
 
 /***/ },
 /* 17 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	
-	var _create = __webpack_require__(18);
-	
-	var _create2 = _interopRequireDefault(_create);
-	
-	var _create3 = __webpack_require__(19);
-	
-	var _create4 = _interopRequireDefault(_create3);
-	
-	var _game = __webpack_require__(20);
-	
-	var _game2 = _interopRequireDefault(_game);
-	
-	var _game3 = __webpack_require__(21);
-	
-	var _game4 = _interopRequireDefault(_game3);
-	
-	var _home = __webpack_require__(22);
-	
-	var _home2 = _interopRequireDefault(_home);
-	
-	var _home3 = __webpack_require__(23);
-	
-	var _home4 = _interopRequireDefault(_home3);
-	
-	var _login = __webpack_require__(24);
-	
-	var _login2 = _interopRequireDefault(_login);
-	
-	var _login3 = __webpack_require__(25);
-	
-	var _login4 = _interopRequireDefault(_login3);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
 	function Config($stateProvider, $urlRouterProvider, $locationProvider, $mdThemingProvider) {
 	    $urlRouterProvider.otherwise('/');
 	
+	    var requireAuth = {
+	        // controller will not be loaded until $waitForAuth resolves
+	        // Auth refers to our $firebaseAuth wrapper in the example above
+	        'currentAuth': ['FirebaseService', function (FirebaseService) {
+	            // $waitForAuth returns a promise so the resolve waits for it to complete
+	            return FirebaseService.waitForAuth().then(function (value) {
+	                if (value === null) {
+	                    return Promise.reject('AUTH_REQUIRED');
+	                }
+	            });
+	        }]
+	    };
+	
 	    $stateProvider.state('home', {
 	        url: '/',
-	        controller: _home4.default,
-	        controllerAs: 'vm',
-	        template: _home2.default
+	        template: '<home></home>'
 	    }).state('create', {
 	        url: '/create',
-	        controller: _create4.default,
-	        controllerAs: 'vm',
-	        template: _create2.default,
-	        resolve: {
-	            // controller will not be loaded until $waitForAuth resolves
-	            // Auth refers to our $firebaseAuth wrapper in the example above
-	            'currentAuth': ['FirebaseService', function (FirebaseService) {
-	                // $waitForAuth returns a promise so the resolve waits for it to complete
-	                return FirebaseService.waitForAuth().then(function (value) {
-	                    if (value === null) {
-	                        return Promise.reject('AUTH_REQUIRED');
-	                    }
-	                });
-	            }]
-	        }
+	        template: '<game-create></game-create>',
+	        resolve: requireAuth
 	    }).state('game', {
 	        url: '/game/:gameID',
-	        controller: _game4.default,
-	        controllerAs: 'vm',
-	        template: _game2.default
+	        template: '<game></game>'
+	    }).state('invite', {
+	        url: '/invite/:gameID/:role',
+	        template: '<invite></invite>',
+	        resolve: requireAuth
 	    }).state('login', {
 	        url: '/login?from',
-	        controller: _login4.default,
-	        controllerAs: 'vm',
-	        template: _login2.default
+	        template: '<login></login>'
 	    });
 	
 	    // $locationProvider.html5Mode(true);
@@ -71400,65 +71363,166 @@
 /* 18 */
 /***/ function(module, exports) {
 
-	module.exports = "<md-card class=\"md-whiteframe-14dp\">\n    <md-card-title>\n        <md-card-title-text>\n            <span class=\"md-headline\">Enter your question to start the game.</span>\n        </md-card-title-text>\n    </md-card-title>\n    <md-card-content>\n        <form name=\"vm.question\" layout=\"row\">\n            <md-input-container flex>\n                <label>Question</label>\n                <input type=\"text\" required name=\"questionText\" id=\"questionText\" ng-model=\"vm.questionText\">\n            </md-input-container>\n        </form>\n    </md-card-content>\n    <md-card-actions>\n        <md-button ng-class=\"{disabled: vm.question.questionText.$invalid}\"\n            ng-disabled=\"vm.question.questionText.$invalid\"\n            ng-click=\"vm.createGame()\">Create</md-button>\n    </md-card-actions>\n</md-card>"
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	function run($rootScope, $state) {
+	    $rootScope.$on('$stateChangeError', function (event, toState, toParams, fromState, fromParams, error) {
+	        // We can catch the error thrown when the $requireAuth promise is rejected
+	        // and redirect the user back to the home page
+	        if (error === 'AUTH_REQUIRED') {
+	            $state.go('login');
+	        }
+	    });
+	}
+	
+	run.$inject = ['$rootScope', '$state'];
+	
+	exports.default = run;
 
 /***/ },
 /* 19 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 	
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	var _angular = __webpack_require__(1);
 	
-	var CreateGameController = (function () {
-	    function CreateGameController($state, GameService, UserService) {
-	        _classCallCheck(this, CreateGameController);
+	var angular = _interopRequireWildcard(_angular);
 	
-	        this.name = 'CreateGameController';
-	        this.$state = $state;
-	        this.GameService = GameService;
-	        this.UserService = UserService;
+	var _components = __webpack_require__(20);
 	
-	        this.activate();
-	    }
+	var _components2 = _interopRequireDefault(_components);
 	
-	    _createClass(CreateGameController, [{
-	        key: 'activate',
-	        value: function activate() {}
-	    }, {
-	        key: 'createGame',
-	        value: function createGame() {
-	            var state = this.$state;
+	var _home = __webpack_require__(42);
 	
-	            var gameCreated = function gameCreated(game) {
-	                state.go('game', { gameID: game.gameID });
-	            };
+	var _home2 = _interopRequireDefault(_home);
 	
-	            this.GameService.createGame(this.questionText).then(gameCreated);
-	        }
-	    }]);
+	var _invite = __webpack_require__(45);
 	
-	    return CreateGameController;
-	})();
+	var _invite2 = _interopRequireDefault(_invite);
 	
-	CreateGameController.$inject = ['$state', 'GameService', 'UserService'];
+	var _login = __webpack_require__(48);
 	
-	exports.default = CreateGameController;
+	var _login2 = _interopRequireDefault(_login);
+	
+	var _toolbar = __webpack_require__(51);
+	
+	var _toolbar2 = _interopRequireDefault(_toolbar);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+	
+	var componentModule = angular.module('thinker.components', [_components2.default.name, _home2.default.name, _invite2.default.name, _login2.default.name, _toolbar2.default.name]);
+	
+	exports.default = componentModule;
 
 /***/ },
 /* 20 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	module.exports = "<div layout=\"row\"\" layout-xs=\"column\" ng-if=\"vm.gameLoaded\">\n    <div flex-gt-xs=65 flex>\n        <div ng-if=\"vm.gameLoaded && vm.game.inProgress\">\n            <game-question game=\"vm.game\"></game-question>\n            <game-guesser game=\"vm.game\" guesser-number=\"0\"></game-guesser>\n            <game-guesser game=\"vm.game\" guesser-number=\"1\"></game-guesser>\n        </div>\n        <div ng-if=\"vm.gameLoaded && !vm.game.inProgress\">\n            <game-over game=\"vm.game\"></game-over>\n        </div>\n    </div>\n    <div flex-gt-xs=35 flex>\n        <game-history game=\"vm.game\"></game-history>\n    </div>\n</div>\n<div ng-if=\"!vm.gameLoaded\">\n    <h2>Loading...</h2>\n    <md-progress-linear md-mode=\"indeterminate\"></md-progress-linear>\n</div>"
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _angular = __webpack_require__(1);
+	
+	var angular = _interopRequireWildcard(_angular);
+	
+	var _game = __webpack_require__(21);
+	
+	var _game2 = _interopRequireDefault(_game);
+	
+	var _create = __webpack_require__(24);
+	
+	var _create2 = _interopRequireDefault(_create);
+	
+	var _gameOver = __webpack_require__(27);
+	
+	var _gameOver2 = _interopRequireDefault(_gameOver);
+	
+	var _guesser = __webpack_require__(30);
+	
+	var _guesser2 = _interopRequireDefault(_guesser);
+	
+	var _history = __webpack_require__(33);
+	
+	var _history2 = _interopRequireDefault(_history);
+	
+	var _lobby = __webpack_require__(36);
+	
+	var _lobby2 = _interopRequireDefault(_lobby);
+	
+	var _question = __webpack_require__(39);
+	
+	var _question2 = _interopRequireDefault(_question);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+	
+	var gameComponentModule = angular.module('thinker.components.game', []);
+	
+	gameComponentModule.directive('game', _game2.default);
+	gameComponentModule.directive('gameCreate', _create2.default);
+	gameComponentModule.directive('gameGuesser', _guesser2.default);
+	gameComponentModule.directive('gameHistory', _history2.default);
+	gameComponentModule.directive('gameLobby', _lobby2.default);
+	gameComponentModule.directive('gameOver', _gameOver2.default);
+	gameComponentModule.directive('gameQuestion', _question2.default);
+	
+	exports.default = gameComponentModule;
 
 /***/ },
 /* 21 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _game = __webpack_require__(22);
+	
+	var _game2 = _interopRequireDefault(_game);
+	
+	var _game3 = __webpack_require__(23);
+	
+	var _game4 = _interopRequireDefault(_game3);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var gameComponent = function gameComponent() {
+	    return {
+	        restrict: 'E',
+	        scope: {},
+	        template: _game2.default,
+	        controller: _game4.default,
+	        controllerAs: 'vm',
+	        bindToController: true
+	    };
+	};
+	
+	exports.default = gameComponent;
+
+/***/ },
+/* 22 */
+/***/ function(module, exports) {
+
+	module.exports = "<div layout=\"row\"\" layout-xs=\"column\" ng-if=\"vm.gameLoaded\">\n    <div flex-gt-xs=65 flex>\n        <div ng-if=\"vm.gameLoaded && vm.game.inProgress\">\n            <div ng-if=\"vm.game.started\">\n                <game-question game=\"vm.game\"></game-question>\n                <game-guesser game=\"vm.game\" guesser-number=\"0\"></game-guesser>\n                <game-guesser game=\"vm.game\" guesser-number=\"1\"></game-guesser>\n            </div>\n            <div ng-if=\"!vm.game.started\">\n                <game-lobby game=\"vm.game\"></game-lobby>\n            </div>\n        </div>\n        <div ng-if=\"vm.gameLoaded && !vm.game.inProgress\">\n            <game-over game=\"vm.game\"></game-over>\n        </div>\n    </div>\n    <div flex-gt-xs=35 flex>\n        <game-history game=\"vm.game\"></game-history>\n    </div>\n</div>\n<div ng-if=\"!vm.gameLoaded\">\n    <h2>Loading...</h2>\n    <md-progress-linear md-mode=\"indeterminate\"></md-progress-linear>\n</div>"
+
+/***/ },
+/* 23 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -71501,13 +71565,549 @@
 	exports.default = GameController;
 
 /***/ },
-/* 22 */
+/* 24 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _create = __webpack_require__(25);
+	
+	var _create2 = _interopRequireDefault(_create);
+	
+	var _create3 = __webpack_require__(26);
+	
+	var _create4 = _interopRequireDefault(_create3);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var createComponent = function createComponent() {
+	    return {
+	        restrict: 'E',
+	        scope: {},
+	        template: _create2.default,
+	        controller: _create4.default,
+	        controllerAs: 'vm',
+	        bindToController: true
+	    };
+	};
+	
+	exports.default = createComponent;
+
+/***/ },
+/* 25 */
+/***/ function(module, exports) {
+
+	module.exports = "<md-card class=\"md-whiteframe-14dp\">\n    <md-card-title>\n        <md-card-title-text>\n            <span class=\"md-headline\">To start a game, enter a \"How much/many?\" question.</span>\n            <span class=\"md-subhead\">This question will be answered by who you invite to the game.</span>\n            <span class=\"md-subhead\">Guessers will then attempt to get as close to that answer as possible.</span>\n        </md-card-title-text>\n    </md-card-title>\n    <md-card-content>\n        <form name=\"vm.question\" layout=\"row\">\n            <md-input-container flex>\n                <label>Question</label>\n                <input\n                    type=\"text\"\n                    required\n                    name=\"questionText\"\n                    id=\"questionText\"\n                    ng-model=\"vm.questionText\">\n            </md-input-container>\n        </form>\n        <md-list>\n            <md-subheader class=\"md-no-sticky\">Suggested Questions</md-subheader>\n            <md-list-item ng-repeat=\"question in vm.sampleQuestions\" ng-click=\"vm.questionText = question\">\n                <p> {{ question }} </p>\n            </md-list-item>\n        </md-list>\n    </md-card-content>\n    <md-card-actions>\n        <md-button\n            class=\"md-raised md-primary\"\n            ng-class=\"{disabled: vm.question.questionText.$invalid}\"\n            ng-disabled=\"vm.question.questionText.$invalid\"\n            ng-click=\"vm.createGame()\">Create</md-button>\n    </md-card-actions>\n</md-card>"
+
+/***/ },
+/* 26 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var CreateGameController = (function () {
+	    function CreateGameController($state, GameService, UserService) {
+	        _classCallCheck(this, CreateGameController);
+	
+	        this.name = 'CreateGameController';
+	        this.$state = $state;
+	        this.GameService = GameService;
+	        this.UserService = UserService;
+	
+	        this.activate();
+	    }
+	
+	    _createClass(CreateGameController, [{
+	        key: 'activate',
+	        value: function activate() {
+	            this.sampleQuestions = ['How many countries do you think border the Pacific Ocean?', 'How many elephants are currently in existence?', 'What amount of time, in minutes, would it take to eat 3 dozen donuts?'];
+	        }
+	    }, {
+	        key: 'createGame',
+	        value: function createGame() {
+	            var state = this.$state;
+	
+	            var gameCreated = function gameCreated(game) {
+	                state.go('game', { gameID: game.gameID });
+	            };
+	
+	            this.GameService.createGame(this.questionText).then(gameCreated);
+	        }
+	    }]);
+	
+	    return CreateGameController;
+	})();
+	
+	CreateGameController.$inject = ['$state', 'GameService', 'UserService'];
+	
+	exports.default = CreateGameController;
+
+/***/ },
+/* 27 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _gameOver = __webpack_require__(28);
+	
+	var _gameOver2 = _interopRequireDefault(_gameOver);
+	
+	var _gameOver3 = __webpack_require__(29);
+	
+	var _gameOver4 = _interopRequireDefault(_gameOver3);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var gameOverComponent = function gameOverComponent() {
+	    return {
+	        restrict: 'E',
+	        scope: {
+	            game: '='
+	        },
+	        template: _gameOver2.default,
+	        controller: _gameOver4.default,
+	        controllerAs: 'vm',
+	        bindToController: true
+	    };
+	};
+	
+	exports.default = gameOverComponent;
+
+/***/ },
+/* 28 */
+/***/ function(module, exports) {
+
+	module.exports = "<md-card class=\"md-whiteframe-15dp\">\n    <md-card-header>\n        <md-card-header-text>\n            <span class=\"md-title\">Game Over!</span>\n        </md-card-header-text>\n    </md-card-header>\n    <md-card-content>\n        <md-list>\n            <md-subheader class=\"md-no-sticky\">Question</md-subheader>\n            <md-list-item>\n                <div class=\"md-list-item-text\">\n                    <h3>\"{{ ::vm.game.question }}\"</h3>\n                </div>\n            </md-list-item>\n            <md-divider></md-divider>\n            <md-subheader class=\"md-no-sticky\">Answer</md-subheader>\n            <md-list-item class=\"md-2-line\">\n                <img ng-src=\"{{ ::vm.game.answer.user.profileImage }}\" class=\"md-avatar\" alt=\"{{::vm.game.answer.user.username}}\" />\n                <div class=\"md-list-item-text\" layout=\"column\">\n                    <h3>\"{{ ::vm.game.answer.value }}\"</h3>\n                    <h4>{{ ::vm.game.answer.user.username }}</h4>\n                </div>\n            </md-list-item>\n            <md-divider></md-divider>\n            <md-subheader class=\"md-no-sticky\">Guessers</md-subheader>\n            <md-list-item class=\"md-3-line\" ng-repeat=\"guesser in vm.game.guessers\">\n                <img ng-src=\"{{ ::guesser.user.profileImage }}\" class=\"md-avatar\" alt=\"{{::guesser.user.username}}\" />\n                <div class=\"md-list-item-text\" layout=\"column\">\n                    <div ng-if=\"guesser.user.userID === vm.game.winner.user.userID\">\n                        <h3>Winner!</h3>\n                        <h4>{{ ::guesser.user.username }}</h4>\n                        <p>{{ ::vm.game.winngingGuess }}</p>\n                    </div>\n                    <div ng-if=\"guesser.user.userID !== vm.game.winner.user.userID\">\n                        <h3>Loser!</h3>\n                        <h4>{{ ::guesser.user.username }}</h4>\n                        <p>Last Guess: {{ ::guesser.guess }}</p>\n                    </div>\n                </div>\n            </md-list-item>\n    </md-card-content>\n</md-card>"
+
+/***/ },
+/* 29 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var GameOverController = function GameOverController() {
+	    _classCallCheck(this, GameOverController);
+	
+	    this.name = 'GameOverController';
+	};
+	
+	exports.default = GameOverController;
+
+/***/ },
+/* 30 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _guesser = __webpack_require__(31);
+	
+	var _guesser2 = _interopRequireDefault(_guesser);
+	
+	var _guesser3 = __webpack_require__(32);
+	
+	var _guesser4 = _interopRequireDefault(_guesser3);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var guesserComponent = function guesserComponent() {
+	    return {
+	        restrict: 'E',
+	        scope: {
+	            game: '=',
+	            guesserNumber: '='
+	        },
+	        template: _guesser2.default,
+	        controller: _guesser4.default,
+	        controllerAs: 'vm',
+	        bindToController: true
+	    };
+	};
+	
+	exports.default = guesserComponent;
+
+/***/ },
+/* 31 */
+/***/ function(module, exports) {
+
+	module.exports = "<md-card class=\"md-whiteframe-15dp\">\n    <md-card-header ng-if=\"vm.guesser.user\">\n        <md-card-avatar>\n            <img class=\"md-user-avatar\" ng-src=\"{{ vm.guesser.user.profileImage }}\"/>\n        </md-card-avatar>\n        <md-card-header-text>\n            <span class=\"md-title\">{{ vm.guesser.user.username }}</span>\n            <span class=\"md-subhead\">Guessing</span>\n        </md-card-header-text>\n    </md-card-header>\n    <md-card-header ng-if=\"!vm.guesser.user\">\n        <md-card-header-text>\n            <span class=\"md-title\">Waiting...</span>\n            <span class=\"md-subhead\">Guessing</span>\n        </md-card-header-text>\n    </md-card-header>\n    <!-- Guess states:\n        1) Other user, waiting on answer = Waiting on answer\n        2) Current user, waiting on answer = Waiting on answer\n        3) Other user, waiting to guess = Waiting for user\n        4) Current user, waiting to guess = Waiting for user\n        5) Other user, currently guessing = User guessing\n        6) Current user, currently guessing = Enter Guess\n        -->\n\n    <!-- State: Has user -->\n    <div ng-if=\"vm.guesser.user\">\n        <!-- State: No Answer -->\n        <div ng-if=\"!vm.game.answer.value\">\n            <md-card-content>\n                <span class=\"md-headline\">Waiting on answer</span>\n            </md-card-content>\n        </div>\n        <!-- State: Has Answer -->\n        <div ng-if=\"vm.game.answer.value\">\n            <!-- State: Waiting to guess -->\n            <div ng-if=\"!vm.guesser.active\">\n                <md-card-content>\n                    <span class=\"md-headline\">Waiting for other guesser.</span>\n                </md-card-content>\n            </div>\n            <!-- State: Guessing -->\n            <div ng-if=\"vm.guesser.active\">\n                <!-- State: Not current user -->\n                <div ng-if=\"vm.guesser.user.userID !== vm.UserService.currentUser.user.userID\">\n                    <md-card-content>\n                        <span class=\"md-headline\">Currently guessing</span>\n                    </md-card-content>\n                </div>\n                <!-- State: Is current user -->\n                <div ng-if=\"vm.guesser.user.userID === vm.UserService.currentUser.user.userID\">\n                    <md-card-content>\n                        <form name=\"vm.form\">\n                            <md-input-container>\n                                <label>Guess: Currently {{vm.game.currentGuess}}</label>\n                                <input\n                                    type=\"number\"\n                                    required\n                                    name=\"guess\"\n                                    id=\"guess\"\n                                    ng-model=\"vm.guess\"\n                                    min=\"{{vm.game.currentGuess + 1}}\" \n                                    />\n                            </md-input-container>\n                        </form>\n                    </md-card-content>\n                    <md-card-actions layout=\"row\" layout-align=\"start\">\n                        <md-button class=\"md-raised md-primary\" ng-class=\"{disabled: vm.form.guess.$invalid}\"\n                            ng-disabled=\"vm.form.guess.$invalid\"\n                            ng-click=\"vm.saveGuess()\">Save</md-button>\n                        <md-button class=\"md-raised md-warning\"\n                            ng-click=\"vm.lowerGuess()\">Lower!</md-button>\n                    </md-card-actions>\n                </div>\n            </div>\n        </div>\n    </div>\n</md-card>"
+
+/***/ },
+/* 32 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var GuesserController = (function () {
+	    function GuesserController(GameService, UserService) {
+	        _classCallCheck(this, GuesserController);
+	
+	        this.name = 'GuesserController';
+	        this.GameService = GameService;
+	        this.UserService = UserService;
+	
+	        this.activate();
+	    }
+	
+	    _createClass(GuesserController, [{
+	        key: 'activate',
+	        value: function activate() {
+	            var _this = this;
+	
+	            this.GameService.guesserObject(this.game, this.guesserNumber).then(function (guesser) {
+	                _this.guesser = guesser;
+	            });
+	            this.canJoin = !this.GameService.userInGame(this.game, this.UserService.currentUser.user) && this.UserService.isLoggedIn;
+	        }
+	    }, {
+	        key: 'saveGuess',
+	        value: function saveGuess() {
+	            var _this2 = this;
+	
+	            return this.GameService.saveGuess(this.game, this.guesserNumber, this.guess).then(function () {
+	                _this2.guess = null;
+	                _this2.guesser.active = false;
+	            });
+	        }
+	    }, {
+	        key: 'lowerGuess',
+	        value: function lowerGuess() {
+	            var _this3 = this;
+	
+	            this.GameService.guessLower(this.game, this.guesserNumber).then(function () {
+	                _this3.guesser.active = false;
+	            });
+	        }
+	    }]);
+	
+	    return GuesserController;
+	})();
+	
+	GuesserController.$inject = ['GameService', 'UserService'];
+	
+	exports.default = GuesserController;
+
+/***/ },
+/* 33 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _history = __webpack_require__(34);
+	
+	var _history2 = _interopRequireDefault(_history);
+	
+	var _history3 = __webpack_require__(35);
+	
+	var _history4 = _interopRequireDefault(_history3);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var historyComponent = function historyComponent() {
+	    return {
+	        restrict: 'E',
+	        scope: {
+	            game: '='
+	        },
+	        template: _history2.default,
+	        controller: _history4.default,
+	        controllerAs: 'vm',
+	        bindToController: true
+	    };
+	};
+	
+	exports.default = historyComponent;
+
+/***/ },
+/* 34 */
+/***/ function(module, exports) {
+
+	module.exports = "<md-card class=\"md-whiteframe-15dp\">\n    <md-card-content ng-class=\"{'history-listing': vm.$mdMedia('gt-xs')}\">\n        <md-list>\n            <md-subheader class=\"md-no-sticky\">Game History</md-subheader>\n            <md-list-item class=\"md-3-line\" ng-repeat=\"history in vm.gameHistory | orderBy : timestamp : true\">\n                <img ng-src=\"{{history.user.profileImage}}\" class=\"md-avatar\" alt=\"{{history.user.username}}\" />\n                <div class=\"md-list-item-text\">\n                    <h3>{{ history.user.username }}</h3>\n                    <h4>{{ history.event }}</h4>\n                    <p>{{ history.timestamp | date : 'short' }}</p>\n                </div>\n            </md-list-item>\n        </md-list>\n    </md-card-content>\n</md-card>"
+
+/***/ },
+/* 35 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var HistoryController = (function () {
+	    function HistoryController(GameService, $mdMedia) {
+	        _classCallCheck(this, HistoryController);
+	
+	        this.name = 'HistoryController';
+	        this.GameService = GameService;
+	        this.$mdMedia = $mdMedia;
+	
+	        this.activate();
+	    }
+	
+	    _createClass(HistoryController, [{
+	        key: 'activate',
+	        value: function activate() {
+	            var _this = this;
+	
+	            this.GameService.gameHistory(this.game).then(function (gameHistory) {
+	                _this.gameHistory = gameHistory;
+	            });
+	        }
+	    }]);
+	
+	    return HistoryController;
+	})();
+	
+	HistoryController.$inject = ['GameService', '$mdMedia'];
+	
+	exports.default = HistoryController;
+
+/***/ },
+/* 36 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _lobby = __webpack_require__(37);
+	
+	var _lobby2 = _interopRequireDefault(_lobby);
+	
+	var _lobby3 = __webpack_require__(38);
+	
+	var _lobby4 = _interopRequireDefault(_lobby3);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var lobbyComponent = function lobbyComponent() {
+	    return {
+	        restrict: 'E',
+	        scope: {
+	            game: '='
+	        },
+	        template: _lobby2.default,
+	        controller: _lobby4.default,
+	        controllerAs: 'vm',
+	        bindToController: true
+	    };
+	};
+	
+	exports.default = lobbyComponent;
+
+/***/ },
+/* 37 */
+/***/ function(module, exports) {
+
+	module.exports = "<md-card class=\"md-whiteframe-15dp\">\n    <md-card-header>\n        <md-card-header-text>\n            <span class=\"md-display-2\">Waiting on game to start</span>\n        </md-card-header-text>\n    </md-card-header>\n    <md-card-content>\n        <md-list>\n            <md-subheader class=\"md-no-sticky\">Question</md-subheader>\n            <md-list-item>{{vm.game.question}}</md-list-item>\n            <md-divider ></md-divider>\n\n            <md-subheader class=\"md-no-sticky\">Answerer</md-subheader>\n            <md-list-item class=\"md-3-line\">\n                <img ng-if=\"vm.game.answer.user\" class=\"md-avatar\" ng-src=\"{{ vm.game.answer.user.profileImage }}\"/>\n                <div ng-if=\"vm.game.answer.user\" class=\"md-list-item-text\">\n                    <h3>{{ vm.game.answer.user.username }}</h3>\n                    <p class=\"md-subhead\">Answering</p>\n                </div>\n                <md-icon ng-if=\"!vm.game.answer.user\" class=\"md-avatar-icon material-icons\">trending_down</md-icon>\n                <div ng-if=\"!vm.game.answer.user\" class=\"md-list-item-text\" layout=\"column\">\n                    <h3>Waiting on a user to answer.</h3>\n                    <h4>Invite user via link</h4>\n                    <p class=\"md-caption invite-link\"><a ng-href=\"{{vm.answererLink}}\">{{vm.answererLink}}</a></p>\n                </div>\n            </md-list-item>\n            <md-divider ></md-divider>\n\n            <md-subheader class=\"md-no-sticky\">Guessers</md-subheader>\n            <md-list-item class=\"md-3-line\" ng-repeat=\"guesser in vm.game.guessers\">\n                <img class=\"md-avatar\" ng-src=\"{{ guesser.user.profileImage }}\" ng-if=\"guesser.user\"/>\n                <div class=\"md-list-item-text\" ng-if=\"guesser.user\">\n                    <h3>{{ guesser.user.username }}</h3>\n                    <p class=\"md-subhead\">Guesser {{$index +1 }}</p>\n                </div>\n                <md-icon ng-if=\"!guesser.user\" class=\"md-avatar-icon material-icons\">trending_down</md-icon>\n                <div ng-if=\"!guesser.user\" class=\"md-list-item-text\" layout=\"column\">\n                    <h3>Waiting on a guesser to join.</h3>\n                    <h4>Invite user via link</h4>\n                    <p class=\"md-caption invite-link\"><a ng-href=\"{{vm.guesserLink}}\">{{vm.guesserLink}}</a></p>\n                </div>\n            </md-list-item>\n    </md-card-content>\n</md-card>"
+
+/***/ },
+/* 38 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var LobbyController = (function () {
+	    function LobbyController(GameService) {
+	        _classCallCheck(this, LobbyController);
+	
+	        this.name = 'LobbyController';
+	        this.GameService = GameService;
+	
+	        this.activate();
+	    }
+	
+	    _createClass(LobbyController, [{
+	        key: 'activate',
+	        value: function activate() {
+	            this.answererLink = this.GameService.inviteAnswererLink(this.game);
+	            this.guesserLink = this.GameService.inviteGuesserLink(this.game);
+	        }
+	    }]);
+	
+	    return LobbyController;
+	})();
+	
+	LobbyController.$inject = ['GameService'];
+	
+	exports.default = LobbyController;
+
+/***/ },
+/* 39 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _question = __webpack_require__(40);
+	
+	var _question2 = _interopRequireDefault(_question);
+	
+	var _question3 = __webpack_require__(41);
+	
+	var _question4 = _interopRequireDefault(_question3);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var questionComponent = function questionComponent() {
+	    return {
+	        restrict: 'E',
+	        scope: {
+	            game: '='
+	        },
+	        template: _question2.default,
+	        controller: _question4.default,
+	        controllerAs: 'vm',
+	        bindToController: true
+	    };
+	};
+	
+	exports.default = questionComponent;
+
+/***/ },
+/* 40 */
+/***/ function(module, exports) {
+
+	module.exports = "<md-card class=\"md-whiteframe-15dp\">\n    <md-card-header>\n        <md-card-avatar>\n            <img class=\"md-user-avatar\" ng-src=\"{{ vm.game.answer.user.profileImage }}\"/>\n        </md-card-avatar>\n        <md-card-header-text>\n            <span class=\"md-title\">{{ vm.game.answer.user.username }}</span>\n            <span class=\"md-subhead\">Answered</span>\n        </md-card-header-text>\n    </md-card-header>\n    <md-card-content>\n        <span class=\"md-display-2\">{{vm.game.question}}</span>\n    </md-card-content>\n</md-card>\n"
+
+/***/ },
+/* 41 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var QuestionController = (function () {
+	    function QuestionController() {
+	        _classCallCheck(this, QuestionController);
+	
+	        this.name = 'QuestionController';
+	        this.activate();
+	    }
+	
+	    _createClass(QuestionController, [{
+	        key: 'activate',
+	        value: function activate() {}
+	    }]);
+	
+	    return QuestionController;
+	})();
+	
+	exports.default = QuestionController;
+
+/***/ },
+/* 42 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _angular = __webpack_require__(1);
+	
+	var angular = _interopRequireWildcard(_angular);
+	
+	var _home = __webpack_require__(43);
+	
+	var _home2 = _interopRequireDefault(_home);
+	
+	var _home3 = __webpack_require__(44);
+	
+	var _home4 = _interopRequireDefault(_home3);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+	
+	var homeComponent = function homeComponent() {
+	    return {
+	        restrict: 'E',
+	        scope: {},
+	        template: _home2.default,
+	        controller: _home4.default,
+	        controllerAs: 'vm',
+	        bindToController: true
+	    };
+	};
+	
+	var homeComponentModule = angular.module('thinker.components.home', []);
+	
+	homeComponentModule.directive('home', homeComponent);
+	
+	exports.default = homeComponentModule;
+
+/***/ },
+/* 43 */
 /***/ function(module, exports) {
 
 	module.exports = "<md-card class=\"md-whiteframe-14dp\">\n    <md-card-title>\n        <md-card-title-text>\n            <span class=\"md-headline\">Welcome to Thinker</span>\n        </md-card-title-text>\n    </md-card-title>\n    <md-card-content>\n        <p>Would you like to start a game?</p>\n        <p>Join below</p>\n    </md-card-content>\n    <md-card-actions>\n        <md-button ui-sref=\"create\" class=\"md-raised md-primary\">Start</md-button>\n    </md-card-actions>\n</md-card>"
 
 /***/ },
-/* 23 */
+/* 44 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -71527,13 +72127,188 @@
 	exports.default = HomeController;
 
 /***/ },
-/* 24 */
+/* 45 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _angular = __webpack_require__(1);
+	
+	var angular = _interopRequireWildcard(_angular);
+	
+	var _invite = __webpack_require__(46);
+	
+	var _invite2 = _interopRequireDefault(_invite);
+	
+	var _invite3 = __webpack_require__(47);
+	
+	var _invite4 = _interopRequireDefault(_invite3);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+	
+	var inviteComponent = function inviteComponent() {
+	    return {
+	        restrict: 'E',
+	        scope: {
+	            game: '='
+	        },
+	        template: _invite2.default,
+	        controller: _invite4.default,
+	        controllerAs: 'vm',
+	        bindToController: true
+	    };
+	};
+	
+	var inviteComponentModule = angular.module('thinker.components.invite', []);
+	
+	inviteComponentModule.directive('invite', inviteComponent);
+	
+	exports.default = inviteComponentModule;
+
+/***/ },
+/* 46 */
+/***/ function(module, exports) {
+
+	module.exports = "<div ng-if=\"!vm.isGameLoaded\">\n    <h2>Loading...</h2>\n    <md-progress-linear md-mode=\"indeterminate\"></md-progress-linear>\n</div>\n<div layout=\"row\"\" layout-xs=\"column\" ng-if=\"vm.isGameLoaded\">\n    <div flex-gt-xs=65 flex>\n        <md-card class=\"md-whiteframe-14dp\">\n            <md-card-header>\n                <md-card-avatar>\n                    <img class=\"md-user-avatar\" ng-src=\"{{ vm.game.creator.profileImage }}\"/>\n                </md-card-avatar>\n                <md-card-header-text>\n                    <span class=\"md-subhead\">Invited By</span>\n                    <span class=\"md-title\">{{ vm.game.creator.username }}</span>\n                </md-card-header-text>\n            </md-card-header>\n            <md-card-title>\n                <md-card-title-text>\n                    <span class=\"md-headline\">You have been invited to join a game:</span>\n                    <span class=\"md-display-2\">{{vm.game.question}}</span>\n                </md-card-title-text>\n            </md-card-title>\n            <div ng-if=\"vm.role === 'answerer'\">\n                <md-card-content>\n                    <span class=\"md-headline\">\n                        You will be answering the question and the players will be guessing your answer.\n                    </span>\n                    <!-- User is answering -->\n                    <div ng-if=\"vm.answering\">\n                        <form name=\"vm.form\">\n                            <md-input-container>\n                                <label>Answer</label>\n                                <input type=\"number\" required name=\"questionAnswer\" id=\"questionAnswer\" ng-model=\"vm.questionAnswer\">\n                            </md-input-container>\n                        </form>\n                    </div>\n                </md-card-content>\n                <md-card-actions>\n                    <md-button ng-if=\"!vm.answering\" class=\"md-raised md-primary\" ng-click=\"vm.joinGame()\">Join Game</md-button>\n                    <md-button ng-if=\"vm.answering\" class=\"md-raised md-primary\" ng-class=\"{disabled: vm.form.questionAnswer.$invalid}\"\n                                ng-disabled=\"vm.form.questionAnswer.$invalid\"\n                                ng-click=\"vm.saveAnswer()\">Save</md-button>\n                </md-card-actions>\n            </div>\n            <div ng-if=\"vm.role === 'guesser'\">\n                <md-card-content>\n                    <span class=\"md-headline\">\n                        You will be guessing what another person's answer is.\n                    </span>\n                </md-card-content>\n                <md-card-actions>\n                    <md-button class=\"md-raised md-primary\" ng-click=\"vm.joinGame()\">Join Game</md-button>\n                </md-card-actions>\n            </div>\n        </md-card>\n    </div>\n</div>"
+
+/***/ },
+/* 47 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var InviteController = (function () {
+	    function InviteController($state, $stateParams, GameService, UserService) {
+	        _classCallCheck(this, InviteController);
+	
+	        this.$state = $state;
+	        this.GameService = GameService;
+	        this.UserService = UserService;
+	        this.name = 'InviteController';
+	
+	        this.gameID = $stateParams.gameID;
+	        this.role = $stateParams.role;
+	
+	        this.isGameLoaded = false;
+	        this.loadGame(this.gameID);
+	    }
+	
+	    _createClass(InviteController, [{
+	        key: 'loadGame',
+	        value: function loadGame() {
+	            var _this = this;
+	
+	            this.GameService.loadGame(this.gameID).then(function (game) {
+	                // If game is started, redirect to actual game
+	                if (game.started) {
+	                    _this.$state.go('game', { 'gameID': game.gameID });
+	                } else if (_this.GameService.userInGame(game, _this.UserService.currentUser.user)) {
+	                    _this.$state.go('game', { 'gameID': game.gameID });
+	                } else {
+	                    // Game is not started and user can join
+	                    _this.isGameLoaded = true;
+	                    _this.game = game;
+	                }
+	            });
+	        }
+	    }, {
+	        key: 'joinGame',
+	        value: function joinGame() {
+	            var _this2 = this;
+	
+	            if (this.role === 'answerer') {
+	                this.answering = true;
+	                // this.game.answer.user = this.UserService.currentUser.user;
+	                // this.game.answer.value = false;
+	            } else if (this.role === 'guesser') {
+	                    this.GameService.joinGuesser(this.game, 1, this.UserService.currentUser.user).then(function () {
+	                        _this2.$state.go('game', { 'gameID': _this2.game.gameID });
+	                    });
+	                }
+	        }
+	    }, {
+	        key: 'saveAnswer',
+	        value: function saveAnswer() {
+	            var _this3 = this;
+	
+	            this.GameService.saveAnswer(this.game, this.questionAnswer).then(function () {
+	                _this3.$state.go('game', { 'gameID': _this3.game.gameID });
+	            });
+	        }
+	    }]);
+	
+	    return InviteController;
+	})();
+	
+	InviteController.$inject = ['$state', '$stateParams', 'GameService', 'UserService'];
+	
+	exports.default = InviteController;
+
+/***/ },
+/* 48 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _angular = __webpack_require__(1);
+	
+	var angular = _interopRequireWildcard(_angular);
+	
+	var _login = __webpack_require__(49);
+	
+	var _login2 = _interopRequireDefault(_login);
+	
+	var _login3 = __webpack_require__(50);
+	
+	var _login4 = _interopRequireDefault(_login3);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+	
+	var loginComponent = function loginComponent() {
+	    return {
+	        restrict: 'E',
+	        scope: {},
+	        template: _login2.default,
+	        controller: _login4.default,
+	        controllerAs: 'vm',
+	        bindToController: true
+	    };
+	};
+	
+	var loginComponentModule = angular.module('thinker.components.login', []);
+	
+	loginComponentModule.directive('login', loginComponent);
+	
+	exports.default = loginComponentModule;
+
+/***/ },
+/* 49 */
 /***/ function(module, exports) {
 
 	module.exports = "<md-card class=\"md-whiteframe-14dp\">\n    <md-card-title>\n        <md-card-title-text>\n            <span class=\"md-headline\">Login to Thinker</span>\n        </md-card-title-text>\n    </md-card-title>\n\n    <md-card-actions>\n        <md-button class=\"md-raised md-primary\" ng-click=\"vm.login()\">Login With Twitter</md-button>\n    </md-card-actions>\n</md-card>"
 
 /***/ },
-/* 25 */
+/* 50 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -71585,60 +72360,7 @@
 	exports.default = LoginController;
 
 /***/ },
-/* 26 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	function run($rootScope, $state) {
-	    $rootScope.$on('$stateChangeError', function (event, toState, toParams, fromState, fromParams, error) {
-	        // We can catch the error thrown when the $requireAuth promise is rejected
-	        // and redirect the user back to the home page
-	        if (error === 'AUTH_REQUIRED') {
-	            $state.go('login');
-	        }
-	    });
-	}
-	
-	run.$inject = ['$rootScope', '$state'];
-	
-	exports.default = run;
-
-/***/ },
-/* 27 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _angular = __webpack_require__(1);
-	
-	var angular = _interopRequireWildcard(_angular);
-	
-	var _game = __webpack_require__(28);
-	
-	var _game2 = _interopRequireDefault(_game);
-	
-	var _toolbar = __webpack_require__(41);
-	
-	var _toolbar2 = _interopRequireDefault(_toolbar);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-	
-	var componentModule = angular.module('thinker.components', [_game2.default.name, _toolbar2.default.name]);
-	
-	exports.default = componentModule;
-
-/***/ },
-/* 28 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -71651,398 +72373,7 @@
 	
 	var angular = _interopRequireWildcard(_angular);
 	
-	var _question = __webpack_require__(29);
-	
-	var _question2 = _interopRequireDefault(_question);
-	
-	var _guesser = __webpack_require__(32);
-	
-	var _guesser2 = _interopRequireDefault(_guesser);
-	
-	var _gameOver = __webpack_require__(35);
-	
-	var _gameOver2 = _interopRequireDefault(_gameOver);
-	
-	var _history = __webpack_require__(38);
-	
-	var _history2 = _interopRequireDefault(_history);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-	
-	var gameComponentModule = angular.module('thinker.components.game', []);
-	
-	gameComponentModule.directive('gameQuestion', _question2.default);
-	gameComponentModule.directive('gameGuesser', _guesser2.default);
-	gameComponentModule.directive('gameOver', _gameOver2.default);
-	gameComponentModule.directive('gameHistory', _history2.default);
-	
-	exports.default = gameComponentModule;
-
-/***/ },
-/* 29 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _question = __webpack_require__(30);
-	
-	var _question2 = _interopRequireDefault(_question);
-	
-	var _question3 = __webpack_require__(31);
-	
-	var _question4 = _interopRequireDefault(_question3);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var questionComponent = function questionComponent() {
-	    return {
-	        restrict: 'E',
-	        scope: {
-	            game: '='
-	        },
-	        template: _question2.default,
-	        controller: _question4.default,
-	        controllerAs: 'vm',
-	        bindToController: true
-	    };
-	};
-	
-	exports.default = questionComponent;
-
-/***/ },
-/* 30 */
-/***/ function(module, exports) {
-
-	module.exports = "<md-card class=\"md-whiteframe-15dp\">\n    <md-card-header ng-if=\"vm.game.answer.user\">\n        <md-card-avatar>\n            <img class=\"md-user-avatar\" ng-src=\"{{ vm.game.answer.user.profileImage }}\"/>\n        </md-card-avatar>\n        <md-card-header-text>\n            <span class=\"md-title\">{{ vm.game.answer.user.username }}</span>\n            <span class=\"md-subhead\">Answering</span>\n        </md-card-header-text>\n    </md-card-header>\n    <md-card-title>\n        <md-card-title-text>\n            <span class=\"md-display-2\">{{vm.game.question}}</span>\n            <span class=\"md-subhead\">Question</span>\n        </md-card-title-text>\n    </md-card-title>\n    <!-- Game has been answered -->\n    <div ng-if=\"vm.game.answer.value\">\n        <md-card-content>\n            Answered\n        </md-card-content>\n    </div>\n    <!-- Game has not been answered -->\n    <div ng-if=\"!vm.game.answer.value\">\n        <!-- User can answer -->\n        <div ng-if=\"vm.canAnswer\">\n            <!-- User is answering -->\n            <div ng-if=\"vm.answering\">\n                <md-card-content>\n                    <form name=\"vm.form\">\n                        <md-input-container>\n                            <label>Answer</label>\n                            <input type=\"number\" required name=\"questionAnswer\" id=\"questionAnswer\" ng-model=\"vm.questionAnswer\">\n                        </md-input-container>\n                    </form>\n                </md-card-content>\n                <md-card-actions layout=\"row\" layout-align=\"start\">\n                    <md-button class=\"md-raised md-primary\" ng-class=\"{disabled: vm.form.questionAnswer.$invalid}\"\n                        ng-disabled=\"vm.form.questionAnswer.$invalid\"\n                        ng-click=\"vm.saveAnswer()\">Save</md-button>\n                </md-card-actions>\n            </div>\n            <!-- User is not answering -->\n            <div ng-if=\"!vm.answering\">\n                <md-card-actions layout=\"row\" layout-align=\"start\">\n                    <md-button class=\"md-raised md-primary\"\n                        ng-click=\"vm.startAnswer()\">Answer Question</md-button>\n                </md-card-actions>\n            </div>\n        </div>\n        <!-- User cannot answer and hasn't been answered-->\n        <div ng-if=\"!vm.canAnswer\">\n            <md-card-content>\n                <span class=\"md-headline\">Waiting on answer</span>\n            </md-card-content>\n        </div>\n    </div>\n</md-card>\n"
-
-/***/ },
-/* 31 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var QuestionController = (function () {
-	    function QuestionController(GameService, UserService) {
-	        _classCallCheck(this, QuestionController);
-	
-	        this.name = 'QuestionController';
-	        this.GameService = GameService;
-	        this.UserService = UserService;
-	
-	        this.activate();
-	    }
-	
-	    _createClass(QuestionController, [{
-	        key: 'saveAnswer',
-	        value: function saveAnswer() {
-	            this.GameService.saveAnswer(this.game, this.questionAnswer);
-	        }
-	    }, {
-	        key: 'activate',
-	        value: function activate() {
-	            this.canAnswer = !this.GameService.userInGame(this.game, this.UserService.currentUser.user) && this.UserService.currentUser.user;
-	        }
-	    }, {
-	        key: 'startAnswer',
-	        value: function startAnswer() {
-	            if (!this.GameService.userInGame(this.game, this.UserService.currentUser.user)) {
-	                this.answering = true;
-	            }
-	        }
-	    }]);
-	
-	    return QuestionController;
-	})();
-	
-	QuestionController.$inject = ['GameService', 'UserService'];
-	
-	exports.default = QuestionController;
-
-/***/ },
-/* 32 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _guesser = __webpack_require__(33);
-	
-	var _guesser2 = _interopRequireDefault(_guesser);
-	
-	var _guesser3 = __webpack_require__(34);
-	
-	var _guesser4 = _interopRequireDefault(_guesser3);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var guesserComponent = function guesserComponent() {
-	    return {
-	        restrict: 'E',
-	        scope: {
-	            game: '=',
-	            guesserNumber: '='
-	        },
-	        template: _guesser2.default,
-	        controller: _guesser4.default,
-	        controllerAs: 'vm',
-	        bindToController: true
-	    };
-	};
-	
-	exports.default = guesserComponent;
-
-/***/ },
-/* 33 */
-/***/ function(module, exports) {
-
-	module.exports = "<md-card class=\"md-whiteframe-15dp\">\n    <md-card-header ng-if=\"vm.guesser.user\">\n        <md-card-avatar>\n            <img class=\"md-user-avatar\" ng-src=\"{{ vm.guesser.user.profileImage }}\"/>\n        </md-card-avatar>\n        <md-card-header-text>\n            <span class=\"md-title\">{{ vm.guesser.user.username }}</span>\n            <span class=\"md-subhead\">Guessing</span>\n        </md-card-header-text>\n    </md-card-header>\n    <md-card-header ng-if=\"!vm.guesser.user\">\n        <md-card-header-text>\n            <span class=\"md-title\">Waiting...</span>\n            <span class=\"md-subhead\">Guessing</span>\n        </md-card-header-text>\n    </md-card-header>\n    <!-- Guess states:\n        1) No user, can join = Join Button\n        2) No user, cannot join = Waiting on guesser\n        3) Other user, waiting on answer = Waiting on answer\n        4) Current user, waiting on answer = Waiting on answer\n        5) Other user, waiting to guess = Waiting for user\n        6) Current user, waiting to guess = Waiting for user\n        7) Other user, currently guessing = User guessing\n        8) Current user, currently guessing = Enter Guess\n        -->\n\n    <!-- State: Has user -->\n    <div ng-if=\"vm.guesser.user\">\n        <!-- State: No Answer -->\n        <div ng-if=\"!vm.game.answer.value\">\n            <md-card-content>\n                <span class=\"md-headline\">Waiting on answer</span>\n            </md-card-content>\n        </div>\n        <!-- State: Has Answer -->\n        <div ng-if=\"vm.game.answer.value\">\n            <!-- State: Waiting to guess -->\n            <div ng-if=\"!vm.guesser.active\">\n                <md-card-content>\n                    <span class=\"md-headline\">Waiting for other guesser.</span>\n                </md-card-content>\n            </div>\n            <!-- State: Guessing -->\n            <div ng-if=\"vm.guesser.active\">\n                <!-- State: Not current user -->\n                <div ng-if=\"vm.guesser.user.userID !== vm.UserService.currentUser.user.userID\">\n                    <md-card-content>\n                        <span class=\"md-headline\">Currently guessing</span>\n                    </md-card-content>\n                </div>\n                <!-- State: Is current user -->\n                <div ng-if=\"vm.guesser.user.userID === vm.UserService.currentUser.user.userID\">\n                    <md-card-content>\n                        <form name=\"vm.form\">\n                            <md-input-container>\n                                <label>Guess: Currently {{vm.game.currentGuess}}</label>\n                                <input\n                                    type=\"number\"\n                                    required\n                                    name=\"guess\"\n                                    id=\"guess\"\n                                    ng-model=\"vm.guess\"\n                                    min=\"{{vm.game.currentGuess + 1}}\" \n                                    />\n                            </md-input-container>\n                        </form>\n                    </md-card-content>\n                    <md-card-actions layout=\"row\" layout-align=\"start\">\n                        <md-button class=\"md-raised md-primary\" ng-class=\"{disabled: vm.form.guess.$invalid}\"\n                            ng-disabled=\"vm.form.guess.$invalid\"\n                            ng-click=\"vm.saveGuess()\">Save</md-button>\n                        <md-button class=\"md-raised md-warning\"\n                            ng-click=\"vm.lowerGuess()\">Lower!</md-button>\n                    </md-card-actions>\n                </div>\n            </div>\n        </div>\n    </div>\n    <!-- State: No user -->\n    <div ng-if=\"!vm.guesser.user\">\n        <div ng-if=\"vm.canJoin\">\n            <md-card-actions layout=\"row\" layout-align=\"start\">\n                <md-button class=\"md-raised md-primary\" ng-click=\"vm.joinAsGuesser()\">\n                    Join\n                </md-button>\n            </md-card-actions>\n        </div>\n        <div ng-if=\"!vm.canJoin\">\n            <md-card-content>\n                <span class=\"md-headline\">Waiting on guesser to join</span>\n            </md-card-content>\n        </div>\n    </div>\n</md-card>"
-
-/***/ },
-/* 34 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var GuesserController = (function () {
-	    function GuesserController(GameService, UserService) {
-	        _classCallCheck(this, GuesserController);
-	
-	        this.name = 'GuesserController';
-	        this.GameService = GameService;
-	        this.UserService = UserService;
-	
-	        this.activate();
-	    }
-	
-	    _createClass(GuesserController, [{
-	        key: 'activate',
-	        value: function activate() {
-	            var _this = this;
-	
-	            this.GameService.guesserObject(this.game, this.guesserNumber).then(function (guesser) {
-	                _this.guesser = guesser;
-	            });
-	            this.canJoin = !this.GameService.userInGame(this.game, this.UserService.currentUser.user) && this.UserService.isLoggedIn;
-	        }
-	    }, {
-	        key: 'joinAsGuesser',
-	        value: function joinAsGuesser() {
-	            this.guesser.user = this.UserService.currentUser.user;
-	            return this.GameService.joinGuesser(this.game, this.guesserNumber, this.UserService.currentUser.user);
-	        }
-	    }, {
-	        key: 'saveGuess',
-	        value: function saveGuess() {
-	            var _this2 = this;
-	
-	            return this.GameService.saveGuess(this.game, this.guesserNumber, this.guess).then(function () {
-	                _this2.guess = null;
-	                _this2.guesser.active = false;
-	            });
-	        }
-	    }, {
-	        key: 'lowerGuess',
-	        value: function lowerGuess() {
-	            var _this3 = this;
-	
-	            this.GameService.guessLower(this.game, this.guesserNumber).then(function () {
-	                _this3.guesser.active = false;
-	            });
-	        }
-	    }]);
-	
-	    return GuesserController;
-	})();
-	
-	GuesserController.$inject = ['GameService', 'UserService'];
-	
-	exports.default = GuesserController;
-
-/***/ },
-/* 35 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _gameOver = __webpack_require__(36);
-	
-	var _gameOver2 = _interopRequireDefault(_gameOver);
-	
-	var _gameOver3 = __webpack_require__(37);
-	
-	var _gameOver4 = _interopRequireDefault(_gameOver3);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var gameOverComponent = function gameOverComponent() {
-	    return {
-	        restrict: 'E',
-	        scope: {
-	            game: '='
-	        },
-	        template: _gameOver2.default,
-	        controller: _gameOver4.default,
-	        controllerAs: 'vm',
-	        bindToController: true
-	    };
-	};
-	
-	exports.default = gameOverComponent;
-
-/***/ },
-/* 36 */
-/***/ function(module, exports) {
-
-	module.exports = "<md-card class=\"md-whiteframe-15dp\">\n    <md-card-header>\n        <md-card-header-text>\n            <span class=\"md-title\">Game Over!</span>\n        </md-card-header-text>\n    </md-card-header>\n    <md-card-content>\n        <md-list>\n            <md-subheader class=\"md-no-sticky\">Question</md-subheader>\n            <md-list-item>\n                <div class=\"md-list-item-text\">\n                    <h3>\"{{ ::vm.game.question }}\"</h3>\n                </div>\n            </md-list-item>\n            <md-divider></md-divider>\n            <md-subheader class=\"md-no-sticky\">Answer</md-subheader>\n            <md-list-item class=\"md-2-line\">\n                <img ng-src=\"{{ ::vm.game.answer.user.profileImage }}\" class=\"md-avatar\" alt=\"{{::vm.game.answer.user.username}}\" />\n                <div class=\"md-list-item-text\" layout=\"column\">\n                    <h3>\"{{ ::vm.game.answer.value }}\"</h3>\n                    <h4>{{ ::vm.game.answer.user.username }}</h4>\n                </div>\n            </md-list-item>\n            <md-divider></md-divider>\n            <md-subheader class=\"md-no-sticky\">Guessers</md-subheader>\n            <md-list-item class=\"md-3-line\" ng-repeat=\"guesser in vm.game.guessers\">\n                <img ng-src=\"{{ ::guesser.user.profileImage }}\" class=\"md-avatar\" alt=\"{{::guesser.user.username}}\" />\n                <div class=\"md-list-item-text\" layout=\"column\">\n                    <div ng-if=\"guesser.user.userID === vm.game.winner.user.userID\">\n                        <h3>Winner!</h3>\n                        <h4>{{ ::guesser.user.username }}</h4>\n                        <p>{{ ::vm.game.winngingGuess }}</p>\n                    </div>\n                    <div ng-if=\"guesser.user.userID !== vm.game.winner.user.userID\">\n                        <h3>Loser!</h3>\n                        <h4>{{ ::guesser.user.username }}</h4>\n                        <p>Last Guess: {{ ::guesser.guess }}</p>\n                    </div>\n                </div>\n            </md-list-item>\n    </md-card-content>\n</md-card>"
-
-/***/ },
-/* 37 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var GameOverController = function GameOverController() {
-	    _classCallCheck(this, GameOverController);
-	
-	    this.name = 'GameOverController';
-	};
-	
-	exports.default = GameOverController;
-
-/***/ },
-/* 38 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _history = __webpack_require__(39);
-	
-	var _history2 = _interopRequireDefault(_history);
-	
-	var _history3 = __webpack_require__(40);
-	
-	var _history4 = _interopRequireDefault(_history3);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var historyComponent = function historyComponent() {
-	    return {
-	        restrict: 'E',
-	        scope: {
-	            game: '='
-	        },
-	        template: _history2.default,
-	        controller: _history4.default,
-	        controllerAs: 'vm',
-	        bindToController: true
-	    };
-	};
-	
-	exports.default = historyComponent;
-
-/***/ },
-/* 39 */
-/***/ function(module, exports) {
-
-	module.exports = "<md-card class=\"md-whiteframe-15dp\">\n    <md-card-content ng-class=\"{'history-listing': vm.$mdMedia('gt-xs')}\">\n        <md-list>\n            <md-subheader class=\"md-no-sticky\">Game History</md-subheader>\n            <md-list-item class=\"md-3-line\" ng-repeat=\"history in vm.gameHistory | orderBy : timestamp : true\">\n                <img ng-src=\"{{history.user.profileImage}}\" class=\"md-avatar\" alt=\"{{history.user.username}}\" />\n                <div class=\"md-list-item-text\">\n                    <h3>{{ history.user.username }}</h3>\n                    <h4>{{ history.event }}</h4>\n                    <p>{{ history.timestamp | date : 'short' }}</p>\n                </div>\n            </md-list-item>\n        </md-list>\n    </md-card-content>\n</md-card>"
-
-/***/ },
-/* 40 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var HistoryController = (function () {
-	    function HistoryController(GameService, $mdMedia) {
-	        _classCallCheck(this, HistoryController);
-	
-	        this.name = 'HistoryController';
-	        this.GameService = GameService;
-	        this.$mdMedia = $mdMedia;
-	
-	        this.activate();
-	    }
-	
-	    _createClass(HistoryController, [{
-	        key: 'activate',
-	        value: function activate() {
-	            var _this = this;
-	
-	            this.GameService.gameHistory(this.game).then(function (gameHistory) {
-	                _this.gameHistory = gameHistory;
-	            });
-	        }
-	    }]);
-	
-	    return HistoryController;
-	})();
-	
-	HistoryController.$inject = ['GameService', '$mdMedia'];
-	
-	exports.default = HistoryController;
-
-/***/ },
-/* 41 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _angular = __webpack_require__(1);
-	
-	var angular = _interopRequireWildcard(_angular);
-	
-	var _toolbar = __webpack_require__(42);
+	var _toolbar = __webpack_require__(52);
 	
 	var _toolbar2 = _interopRequireDefault(_toolbar);
 	
@@ -72057,7 +72388,7 @@
 	exports.default = toolbarComponentModule;
 
 /***/ },
-/* 42 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -72066,11 +72397,11 @@
 	    value: true
 	});
 	
-	var _toolbar = __webpack_require__(43);
+	var _toolbar = __webpack_require__(53);
 	
 	var _toolbar2 = _interopRequireDefault(_toolbar);
 	
-	var _toolbar3 = __webpack_require__(44);
+	var _toolbar3 = __webpack_require__(54);
 	
 	var _toolbar4 = _interopRequireDefault(_toolbar3);
 	
@@ -72090,13 +72421,13 @@
 	exports.default = toolbarComponent;
 
 /***/ },
-/* 43 */
+/* 53 */
 /***/ function(module, exports) {
 
 	module.exports = "<md-toolbar>\n    <div class=\"md-toolbar-tools\">\n        <span>\n            <a ui-sref=\"home\"><i class=\"material-icons\">trending_down</i>Thinker</a>\n        </span>\n        <span flex></span>\n        <span ng-if=\"!vm.currentUser.isLoggedIn\">\n            <md-button ui-sref=\"login\">Login</md-button>\n        </span>\n        <span ng-if=\"vm.currentUser.isLoggedIn\">\n            {{ vm.currentUser.user.username }}\n            <md-button ng-click=\"vm.logout()\">Logout</md-button>\n        </span>\n    </div>\n</md-toolbar>"
 
 /***/ },
-/* 44 */
+/* 54 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -72156,7 +72487,7 @@
 	exports.default = ToolbarController;
 
 /***/ },
-/* 45 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -72169,17 +72500,17 @@
 	
 	var angular = _interopRequireWildcard(_angular);
 	
-	__webpack_require__(46);
+	__webpack_require__(56);
 	
-	var _game = __webpack_require__(48);
+	var _game = __webpack_require__(58);
 	
 	var _game2 = _interopRequireDefault(_game);
 	
-	var _user = __webpack_require__(49);
+	var _user = __webpack_require__(59);
 	
 	var _user2 = _interopRequireDefault(_user);
 	
-	var _firebase = __webpack_require__(50);
+	var _firebase = __webpack_require__(60);
 	
 	var _firebase2 = _interopRequireDefault(_firebase);
 	
@@ -72196,15 +72527,15 @@
 	exports.default = servicesModule;
 
 /***/ },
-/* 46 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(47);
+	__webpack_require__(57);
 	module.exports = 'firebase';
 
 
 /***/ },
-/* 47 */
+/* 57 */
 /***/ function(module, exports) {
 
 	/*!
@@ -74487,7 +74818,7 @@
 
 
 /***/ },
-/* 48 */
+/* 58 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -74517,8 +74848,8 @@
 	        user: false,
 	        value: false
 	    };
-	    this.inProgress = false;
-	    this.started = false;
+	    this.inProgress = false; // Game not ended
+	    this.started = false; // Has all users and is being played
 	    this.creator = false;
 	    this.winner = false;
 	    this.winningGuess = false;
@@ -74535,11 +74866,12 @@
 	};
 	
 	var GameService = (function () {
-	    function GameService(UserService, FirebaseService) {
+	    function GameService(UserService, FirebaseService, $state) {
 	        _classCallCheck(this, GameService);
 	
 	        this.UserService = UserService;
 	        this.FirebaseService = FirebaseService;
+	        this.$state = $state;
 	    }
 	
 	    _createClass(GameService, [{
@@ -74711,17 +75043,32 @@
 	                return gameHistory.$add(historyItem);
 	            });
 	        }
+	    }, {
+	        key: 'inviteLink',
+	        value: function inviteLink(game, type) {
+	            return this.$state.href('invite', { 'gameID': game.$id, 'role': type }, { absolute: true });
+	        }
+	    }, {
+	        key: 'inviteAnswererLink',
+	        value: function inviteAnswererLink(game) {
+	            return this.inviteLink(game, 'answerer');
+	        }
+	    }, {
+	        key: 'inviteGuesserLink',
+	        value: function inviteGuesserLink(game) {
+	            return this.inviteLink(game, 'guesser');
+	        }
 	    }]);
 	
 	    return GameService;
 	})();
 	
-	GameService.$inject = ['UserService', 'FirebaseService'];
+	GameService.$inject = ['UserService', 'FirebaseService', '$state'];
 	
 	exports.default = GameService;
 
 /***/ },
-/* 49 */
+/* 59 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -74809,7 +75156,7 @@
 	exports.default = UserService;
 
 /***/ },
-/* 50 */
+/* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -74820,11 +75167,11 @@
 	    value: true
 	});
 	
-	var _firebase = __webpack_require__(51);
+	var _firebase = __webpack_require__(61);
 	
 	var _firebase2 = _interopRequireDefault(_firebase);
 	
-	var _user = __webpack_require__(52);
+	var _user = __webpack_require__(62);
 	
 	var _user2 = _interopRequireDefault(_user);
 	
@@ -74947,7 +75294,7 @@
 	exports.default = FirebaseService;
 
 /***/ },
-/* 51 */
+/* 61 */
 /***/ function(module, exports) {
 
 	/*! @license Firebase v2.3.2
@@ -75221,7 +75568,7 @@
 
 
 /***/ },
-/* 52 */
+/* 62 */
 /***/ function(module, exports) {
 
 	"use strict";

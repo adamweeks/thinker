@@ -15,14 +15,12 @@
         </md-card-header-text>
     </md-card-header>
     <!-- Guess states:
-        1) No user, can join = Join Button
-        2) No user, cannot join = Waiting on guesser
-        3) Other user, waiting on answer = Waiting on answer
-        4) Current user, waiting on answer = Waiting on answer
-        5) Other user, waiting to guess = Waiting for user
-        6) Current user, waiting to guess = Waiting for user
-        7) Other user, currently guessing = User guessing
-        8) Current user, currently guessing = Enter Guess
+        1) Other user, waiting on answer = Waiting on answer
+        2) Current user, waiting on answer = Waiting on answer
+        3) Other user, waiting to guess = Waiting for user
+        4) Current user, waiting to guess = Waiting for user
+        5) Other user, currently guessing = User guessing
+        6) Current user, currently guessing = Enter Guess
         -->
 
     <!-- State: Has user -->
@@ -75,21 +73,6 @@
                     </md-card-actions>
                 </div>
             </div>
-        </div>
-    </div>
-    <!-- State: No user -->
-    <div ng-if="!vm.guesser.user">
-        <div ng-if="vm.canJoin">
-            <md-card-actions layout="row" layout-align="start">
-                <md-button class="md-raised md-primary" ng-click="vm.joinAsGuesser()">
-                    Join
-                </md-button>
-            </md-card-actions>
-        </div>
-        <div ng-if="!vm.canJoin">
-            <md-card-content>
-                <span class="md-headline">Waiting on guesser to join</span>
-            </md-card-content>
         </div>
     </div>
 </md-card>

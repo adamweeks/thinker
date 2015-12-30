@@ -14,11 +14,6 @@ class GuesserController {
         this.canJoin = (!this.GameService.userInGame(this.game, this.UserService.currentUser.user) && this.UserService.isLoggedIn);
     }
 
-    joinAsGuesser() {
-        this.guesser.user = this.UserService.currentUser.user;
-        return this.GameService.joinGuesser(this.game, this.guesserNumber, this.UserService.currentUser.user);
-    }
-
     saveGuess() {
         return this.GameService.saveGuess(this.game, this.guesserNumber, this.guess).then(() => {
             this.guess = null;

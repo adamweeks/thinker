@@ -42,6 +42,10 @@ var config = {
 			{
 				test: /\.(svg|jpg|gif|jpeg)$/,
 				loader: 'file?name=images/[name].[ext]'
+			},
+            {
+				test: /\.(wav|mp3)$/,
+				loader: 'file?name=media/[name].[ext]'
 			}
 		]
 	}

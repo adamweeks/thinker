@@ -72,7 +72,7 @@
 	
 	var _components2 = _interopRequireDefault(_components);
 	
-	var _services = __webpack_require__(55);
+	var _services = __webpack_require__(58);
 	
 	var _services2 = _interopRequireDefault(_services);
 	
@@ -71400,19 +71400,19 @@
 	
 	var _components2 = _interopRequireDefault(_components);
 	
-	var _home = __webpack_require__(42);
+	var _home = __webpack_require__(45);
 	
 	var _home2 = _interopRequireDefault(_home);
 	
-	var _invite = __webpack_require__(45);
+	var _invite = __webpack_require__(48);
 	
 	var _invite2 = _interopRequireDefault(_invite);
 	
-	var _login = __webpack_require__(48);
+	var _login = __webpack_require__(51);
 	
 	var _login2 = _interopRequireDefault(_login);
 	
-	var _toolbar = __webpack_require__(51);
+	var _toolbar = __webpack_require__(54);
 	
 	var _toolbar2 = _interopRequireDefault(_toolbar);
 	
@@ -71466,6 +71466,10 @@
 	
 	var _question2 = _interopRequireDefault(_question);
 	
+	var _settings = __webpack_require__(42);
+	
+	var _settings2 = _interopRequireDefault(_settings);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
@@ -71479,6 +71483,7 @@
 	gameComponentModule.directive('gameLobby', _lobby2.default);
 	gameComponentModule.directive('gameOver', _gameOver2.default);
 	gameComponentModule.directive('gameQuestion', _question2.default);
+	gameComponentModule.directive('gameSettings', _settings2.default);
 	
 	exports.default = gameComponentModule;
 
@@ -71519,7 +71524,7 @@
 /* 22 */
 /***/ function(module, exports) {
 
-	module.exports = "<div layout=\"row\"\" layout-xs=\"column\" ng-if=\"vm.gameLoaded\">\n    <div flex-gt-xs=65 flex>\n        <div ng-if=\"vm.gameLoaded && vm.game.inProgress\">\n            <div ng-if=\"vm.game.started\">\n                <game-question game=\"vm.game\"></game-question>\n                <game-guesser game=\"vm.game\" guesser-number=\"0\"></game-guesser>\n                <game-guesser game=\"vm.game\" guesser-number=\"1\"></game-guesser>\n            </div>\n            <div ng-if=\"!vm.game.started\">\n                <game-lobby game=\"vm.game\"></game-lobby>\n            </div>\n        </div>\n        <div ng-if=\"vm.gameLoaded && !vm.game.inProgress\">\n            <game-over game=\"vm.game\"></game-over>\n        </div>\n    </div>\n    <div flex-gt-xs=35 flex>\n        <game-history game=\"vm.game\"></game-history>\n    </div>\n</div>\n<div ng-if=\"!vm.gameLoaded\">\n    <h2>Loading...</h2>\n    <md-progress-linear md-mode=\"indeterminate\"></md-progress-linear>\n</div>"
+	module.exports = "<div layout=\"row\"\" layout-xs=\"column\" ng-if=\"vm.gameLoaded\">\n    <div flex-gt-xs=65 flex>\n        <div ng-if=\"vm.gameLoaded && vm.game.inProgress\">\n            <div ng-if=\"vm.game.started\">\n                <game-question game=\"vm.game\"></game-question>\n                <game-guesser game=\"vm.game\" guesser-number=\"0\"></game-guesser>\n                <game-guesser game=\"vm.game\" guesser-number=\"1\"></game-guesser>\n            </div>\n            <div ng-if=\"!vm.game.started\">\n                <game-lobby game=\"vm.game\"></game-lobby>\n            </div>\n        </div>\n        <div ng-if=\"vm.gameLoaded && !vm.game.inProgress\">\n            <game-over game=\"vm.game\"></game-over>\n        </div>\n    </div>\n    <div flex-gt-xs=35 flex>\n        <game-history game=\"vm.game\"></game-history>\n        <game-settings game-settings=\"vm.gameSettings\"></game-settings>\n    </div>\n</div>\n<div ng-if=\"!vm.gameLoaded\">\n    <h2>Loading...</h2>\n    <md-progress-linear md-mode=\"indeterminate\"></md-progress-linear>\n</div>"
 
 /***/ },
 /* 23 */
@@ -71535,13 +71540,23 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
+	var GameSettings = function GameSettings() {
+	    _classCallCheck(this, GameSettings);
+	
+	    this.sounds = true;
+	    this.notifications = false;
+	};
+	
 	var GameController = (function () {
-	    function GameController($stateParams, GameService) {
+	    function GameController($stateParams, GameService, UserService, AlertService) {
 	        _classCallCheck(this, GameController);
 	
+	        this.AlertService = AlertService;
 	        this.GameService = GameService;
+	        this.UserService = UserService;
 	        this.name = 'GameController';
 	        this.gameID = $stateParams.gameID;
+	        this.gameSettings = new GameSettings();
 	        this.gameLoaded = false;
 	        this.loadGame(this.gameID);
 	    }
@@ -71549,18 +71564,48 @@
 	    _createClass(GameController, [{
 	        key: 'loadGame',
 	        value: function loadGame() {
-	            var self = this;
-	            this.GameService.loadGame(this.gameID).then(function gameLoaded(game) {
-	                self.game = game;
-	                self.gameLoaded = true;
-	            });
+	            var _this = this;
+	
+	            var gameLoaded = function gameLoaded(game) {
+	                _this.game = game;
+	                _this.gameLoaded = true;
+	                if (_this.game.inProgress && _this.GameService.userInGame(_this.game, _this.UserService.currentUser.user)) {
+	                    _this.watchGameplay(game);
+	                }
+	            };
+	
+	            this.GameService.loadGame(this.gameID).then(gameLoaded);
+	        }
+	    }, {
+	        key: 'watchGameplay',
+	        value: function watchGameplay(game) {
+	            var _this2 = this;
+	
+	            var gameChanged = function gameChanged() {
+	                if (_this2.gameSettings.sounds) {
+	                    _this2.AlertService.playAlertSound();
+	                }
+	                if (_this2.gameSettings.notifications) {
+	                    if (!game.inProgress) {
+	                        _this2.AlertService.pushAlert('Game over!');
+	                        _this2.unwatchGame();
+	                    } else {
+	                        // Alert if current user is active
+	                        var activeUser = _this2.GameService.activeUserForGame(game);
+	                        if (activeUser.user.userID === _this2.UserService.currentUser.user.userID) {
+	                            _this2.AlertService.pushAlert('Your turn!');
+	                        }
+	                    }
+	                }
+	            };
+	            this.unwatchGame = game.$watch(gameChanged);
 	        }
 	    }]);
 	
 	    return GameController;
 	})();
 	
-	GameController.$inject = ['$stateParams', 'GameService'];
+	GameController.$inject = ['$stateParams', 'GameService', 'UserService', 'AlertService'];
 	
 	exports.default = GameController;
 
@@ -72067,15 +72112,109 @@
 	    value: true
 	});
 	
+	var _settings = __webpack_require__(43);
+	
+	var _settings2 = _interopRequireDefault(_settings);
+	
+	var _settings3 = __webpack_require__(44);
+	
+	var _settings4 = _interopRequireDefault(_settings3);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var settingsComponent = function settingsComponent() {
+	    return {
+	        restrict: 'E',
+	        scope: {
+	            gameSettings: '='
+	        },
+	        template: _settings2.default,
+	        controller: _settings4.default,
+	        controllerAs: 'vm',
+	        bindToController: true
+	    };
+	};
+	
+	exports.default = settingsComponent;
+
+/***/ },
+/* 43 */
+/***/ function(module, exports) {
+
+	module.exports = "<md-card class=\"md-whiteframe-15dp\">\n    <md-card-content ng-class=\"{'history-listing': vm.$mdMedia('gt-xs')}\">\n        <md-subheader class=\"md-no-sticky\">Settings</md-subheader>\n        <md-checkbox ng-model=\"vm.gameSettings.sounds\" aria-label=\"Sounds\">\n            Sounds\n        </md-checkbox>\n        <md-checkbox ng-model=\"vm.notificationsEnabled\" aria-label=\"Notifications\" ng-change=\"vm.notificationChanged()\">\n            Notifications\n        </md-checkbox>\n    </md-card-content>\n</md-card>"
+
+/***/ },
+/* 44 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var SettingsController = (function () {
+	    function SettingsController(AlertService) {
+	        _classCallCheck(this, SettingsController);
+	
+	        this.AlertService = AlertService;
+	        this.name = 'SettingsController';
+	        this.activate();
+	    }
+	
+	    _createClass(SettingsController, [{
+	        key: 'activate',
+	        value: function activate() {
+	            this.notificationsEnabled = this.gameSettings.notifications;
+	        }
+	    }, {
+	        key: 'notificationChanged',
+	        value: function notificationChanged() {
+	            var _this = this;
+	
+	            if (!this.AlertService.hasPermission && this.notificationsEnabled) {
+	                this.notificationsEnabled = false;
+	                this.AlertService.requestNotificationPermission().then(function (result) {
+	                    _this.notificationsEnabled = result;
+	                    _this.gameSettings.notifications = result;
+	                });
+	            }
+	            if (this.AlertService.hasPermission) {
+	                this.gameSettings.notifications = this.notificationsEnabled;
+	            }
+	        }
+	    }]);
+	
+	    return SettingsController;
+	})();
+	
+	SettingsController.$inject = ['AlertService'];
+	
+	exports.default = SettingsController;
+
+/***/ },
+/* 45 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
 	var _angular = __webpack_require__(1);
 	
 	var angular = _interopRequireWildcard(_angular);
 	
-	var _home = __webpack_require__(43);
+	var _home = __webpack_require__(46);
 	
 	var _home2 = _interopRequireDefault(_home);
 	
-	var _home3 = __webpack_require__(44);
+	var _home3 = __webpack_require__(47);
 	
 	var _home4 = _interopRequireDefault(_home3);
 	
@@ -72101,13 +72240,13 @@
 	exports.default = homeComponentModule;
 
 /***/ },
-/* 43 */
+/* 46 */
 /***/ function(module, exports) {
 
 	module.exports = "<md-card class=\"md-whiteframe-14dp\">\n    <md-card-title>\n        <md-card-title-text>\n            <span class=\"md-headline\">Welcome to Thinker</span>\n        </md-card-title-text>\n    </md-card-title>\n    <md-card-content>\n        <p>Would you like to start a game?</p>\n        <p>Join below</p>\n    </md-card-content>\n    <md-card-actions>\n        <md-button ui-sref=\"create\" class=\"md-raised md-primary\">Start</md-button>\n    </md-card-actions>\n</md-card>"
 
 /***/ },
-/* 44 */
+/* 47 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -72127,7 +72266,7 @@
 	exports.default = HomeController;
 
 /***/ },
-/* 45 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -72140,11 +72279,11 @@
 	
 	var angular = _interopRequireWildcard(_angular);
 	
-	var _invite = __webpack_require__(46);
+	var _invite = __webpack_require__(49);
 	
 	var _invite2 = _interopRequireDefault(_invite);
 	
-	var _invite3 = __webpack_require__(47);
+	var _invite3 = __webpack_require__(50);
 	
 	var _invite4 = _interopRequireDefault(_invite3);
 	
@@ -72172,13 +72311,13 @@
 	exports.default = inviteComponentModule;
 
 /***/ },
-/* 46 */
+/* 49 */
 /***/ function(module, exports) {
 
 	module.exports = "<div ng-if=\"!vm.isGameLoaded\">\n    <h2>Loading...</h2>\n    <md-progress-linear md-mode=\"indeterminate\"></md-progress-linear>\n</div>\n<div layout=\"row\"\" layout-xs=\"column\" ng-if=\"vm.isGameLoaded\">\n    <div flex-gt-xs=65 flex>\n        <md-card class=\"md-whiteframe-14dp\">\n            <md-card-header>\n                <md-card-avatar>\n                    <img class=\"md-user-avatar\" ng-src=\"{{ vm.game.creator.profileImage }}\"/>\n                </md-card-avatar>\n                <md-card-header-text>\n                    <span class=\"md-subhead\">Invited By</span>\n                    <span class=\"md-title\">{{ vm.game.creator.username }}</span>\n                </md-card-header-text>\n            </md-card-header>\n            <md-card-title>\n                <md-card-title-text>\n                    <span class=\"md-headline\">You have been invited to join a game:</span>\n                    <span class=\"md-display-2\">{{vm.game.question}}</span>\n                </md-card-title-text>\n            </md-card-title>\n            <div ng-if=\"vm.role === 'answerer'\">\n                <md-card-content>\n                    <span class=\"md-headline\">\n                        You will be answering the question and the players will be guessing your answer.\n                    </span>\n                    <!-- User is answering -->\n                    <div ng-if=\"vm.answering\">\n                        <form name=\"vm.form\">\n                            <md-input-container>\n                                <label>Answer</label>\n                                <input type=\"number\" required name=\"questionAnswer\" id=\"questionAnswer\" ng-model=\"vm.questionAnswer\">\n                            </md-input-container>\n                        </form>\n                    </div>\n                </md-card-content>\n                <md-card-actions>\n                    <md-button ng-if=\"!vm.answering\" class=\"md-raised md-primary\" ng-click=\"vm.joinGame()\">Join Game</md-button>\n                    <md-button ng-if=\"vm.answering\" class=\"md-raised md-primary\" ng-class=\"{disabled: vm.form.questionAnswer.$invalid}\"\n                                ng-disabled=\"vm.form.questionAnswer.$invalid\"\n                                ng-click=\"vm.saveAnswer()\">Save</md-button>\n                </md-card-actions>\n            </div>\n            <div ng-if=\"vm.role === 'guesser'\">\n                <md-card-content>\n                    <span class=\"md-headline\">\n                        You will be guessing what another person's answer is.\n                    </span>\n                </md-card-content>\n                <md-card-actions>\n                    <md-button class=\"md-raised md-primary\" ng-click=\"vm.joinGame()\">Join Game</md-button>\n                </md-card-actions>\n            </div>\n        </md-card>\n    </div>\n</div>"
 
 /***/ },
-/* 47 */
+/* 50 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -72259,7 +72398,7 @@
 	exports.default = InviteController;
 
 /***/ },
-/* 48 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -72272,11 +72411,11 @@
 	
 	var angular = _interopRequireWildcard(_angular);
 	
-	var _login = __webpack_require__(49);
+	var _login = __webpack_require__(52);
 	
 	var _login2 = _interopRequireDefault(_login);
 	
-	var _login3 = __webpack_require__(50);
+	var _login3 = __webpack_require__(53);
 	
 	var _login4 = _interopRequireDefault(_login3);
 	
@@ -72302,13 +72441,13 @@
 	exports.default = loginComponentModule;
 
 /***/ },
-/* 49 */
+/* 52 */
 /***/ function(module, exports) {
 
 	module.exports = "<md-card class=\"md-whiteframe-14dp\">\n    <md-card-title>\n        <md-card-title-text>\n            <span class=\"md-headline\">Login to Thinker</span>\n        </md-card-title-text>\n    </md-card-title>\n\n    <md-card-actions>\n        <md-button class=\"md-raised md-primary\" ng-click=\"vm.login()\">Login With Twitter</md-button>\n    </md-card-actions>\n</md-card>"
 
 /***/ },
-/* 50 */
+/* 53 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -72360,7 +72499,7 @@
 	exports.default = LoginController;
 
 /***/ },
-/* 51 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -72373,7 +72512,7 @@
 	
 	var angular = _interopRequireWildcard(_angular);
 	
-	var _toolbar = __webpack_require__(52);
+	var _toolbar = __webpack_require__(55);
 	
 	var _toolbar2 = _interopRequireDefault(_toolbar);
 	
@@ -72388,7 +72527,7 @@
 	exports.default = toolbarComponentModule;
 
 /***/ },
-/* 52 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -72397,11 +72536,11 @@
 	    value: true
 	});
 	
-	var _toolbar = __webpack_require__(53);
+	var _toolbar = __webpack_require__(56);
 	
 	var _toolbar2 = _interopRequireDefault(_toolbar);
 	
-	var _toolbar3 = __webpack_require__(54);
+	var _toolbar3 = __webpack_require__(57);
 	
 	var _toolbar4 = _interopRequireDefault(_toolbar3);
 	
@@ -72421,13 +72560,13 @@
 	exports.default = toolbarComponent;
 
 /***/ },
-/* 53 */
+/* 56 */
 /***/ function(module, exports) {
 
 	module.exports = "<md-toolbar>\n    <div class=\"md-toolbar-tools\">\n        <span>\n            <a ui-sref=\"home\"><i class=\"material-icons\">trending_down</i>Thinker</a>\n        </span>\n        <span flex></span>\n        <span ng-if=\"!vm.currentUser.isLoggedIn\">\n            <md-button ui-sref=\"login\">Login</md-button>\n        </span>\n        <span ng-if=\"vm.currentUser.isLoggedIn\">\n            {{ vm.currentUser.user.username }}\n            <md-button ng-click=\"vm.logout()\">Logout</md-button>\n        </span>\n    </div>\n</md-toolbar>"
 
 /***/ },
-/* 54 */
+/* 57 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -72487,7 +72626,7 @@
 	exports.default = ToolbarController;
 
 /***/ },
-/* 55 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -72500,17 +72639,21 @@
 	
 	var angular = _interopRequireWildcard(_angular);
 	
-	__webpack_require__(56);
+	__webpack_require__(59);
 	
-	var _game = __webpack_require__(58);
+	var _alert = __webpack_require__(61);
+	
+	var _alert2 = _interopRequireDefault(_alert);
+	
+	var _game = __webpack_require__(63);
 	
 	var _game2 = _interopRequireDefault(_game);
 	
-	var _user = __webpack_require__(59);
+	var _user = __webpack_require__(64);
 	
 	var _user2 = _interopRequireDefault(_user);
 	
-	var _firebase = __webpack_require__(60);
+	var _firebase = __webpack_require__(65);
 	
 	var _firebase2 = _interopRequireDefault(_firebase);
 	
@@ -72520,6 +72663,7 @@
 	
 	var servicesModule = angular.module('thinker.services', ['firebase']);
 	
+	servicesModule.service('AlertService', _alert2.default);
 	servicesModule.service('GameService', _game2.default);
 	servicesModule.service('UserService', _user2.default);
 	servicesModule.service('FirebaseService', _firebase2.default);
@@ -72527,15 +72671,15 @@
 	exports.default = servicesModule;
 
 /***/ },
-/* 56 */
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(57);
+	__webpack_require__(60);
 	module.exports = 'firebase';
 
 
 /***/ },
-/* 57 */
+/* 60 */
 /***/ function(module, exports) {
 
 	/*!
@@ -74818,7 +74962,78 @@
 
 
 /***/ },
-/* 58 */
+/* 61 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	__webpack_require__(62);
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var AlertService = (function () {
+	    function AlertService() {
+	        _classCallCheck(this, AlertService);
+	
+	        this.Notification = window.Notification || window.mozNotification || window.webkitNotification;
+	        this.hasPermission = this.Notification.permission === 'granted';
+	    }
+	
+	    _createClass(AlertService, [{
+	        key: 'playAlertSound',
+	        value: function playAlertSound() {
+	            var audio = new Audio('media/alert.wav');
+	            audio.play();
+	        }
+	    }, {
+	        key: 'pushAlert',
+	        value: function pushAlert(alertText) {
+	            var notification = new this.Notification(alertText);
+	            return notification;
+	        }
+	    }, {
+	        key: 'requestNotificationPermission',
+	        value: function requestNotificationPermission() {
+	            var _this = this;
+	
+	            return new Promise(function (resolve) {
+	                if (_this.hasPermission) {
+	                    resolve(true);
+	                } else {
+	                    _this.Notification.requestPermission(function (result) {
+	                        if (result === 'denied') {
+	                            resolve(false);
+	                        } else if (result === 'default') {
+	                            resolve(false);
+	                        } else {
+	                            _this.hasPermission = true;
+	                            resolve(true);
+	                        }
+	                    });
+	                }
+	            });
+	        }
+	    }]);
+	
+	    return AlertService;
+	})();
+	
+	exports.default = AlertService;
+
+/***/ },
+/* 62 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "media/alert.wav";
+
+/***/ },
+/* 63 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -75068,7 +75283,7 @@
 	exports.default = GameService;
 
 /***/ },
-/* 59 */
+/* 64 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -75156,7 +75371,7 @@
 	exports.default = UserService;
 
 /***/ },
-/* 60 */
+/* 65 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -75167,11 +75382,11 @@
 	    value: true
 	});
 	
-	var _firebase = __webpack_require__(61);
+	var _firebase = __webpack_require__(66);
 	
 	var _firebase2 = _interopRequireDefault(_firebase);
 	
-	var _user = __webpack_require__(62);
+	var _user = __webpack_require__(67);
 	
 	var _user2 = _interopRequireDefault(_user);
 	
@@ -75294,7 +75509,7 @@
 	exports.default = FirebaseService;
 
 /***/ },
-/* 61 */
+/* 66 */
 /***/ function(module, exports) {
 
 	/*! @license Firebase v2.3.2
@@ -75568,7 +75783,7 @@
 
 
 /***/ },
-/* 62 */
+/* 67 */
 /***/ function(module, exports) {
 
 	"use strict";

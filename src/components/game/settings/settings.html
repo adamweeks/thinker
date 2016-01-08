@@ -4,7 +4,7 @@
         <md-checkbox ng-model="vm.gameSettings.sounds" aria-label="Sounds">
             Sounds
         </md-checkbox>
-        <md-checkbox ng-model="vm.gameSettings.notifications" aria-label="Sounds">
+        <md-checkbox ng-model="vm.notificationsEnabled" aria-label="Notifications" ng-change="vm.notificationChanged()">
             Notifications
         </md-checkbox>
     </md-card-content>

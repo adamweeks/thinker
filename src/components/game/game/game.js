@@ -1,7 +1,7 @@
 class GameSettings {
     constructor() {
         this.sounds = true;
-        this.notifications = true;
+        this.notifications = false;
     }
 }
 
@@ -34,9 +34,17 @@ class GameController {
             if (this.gameSettings.sounds) {
                 this.AlertService.playAlertSound();
             }
-
             if (this.gameSettings.notifications) {
-                // TODO: Push notifications
+                if (!game.inProgress) {
+                    this.AlertService.pushAlert('Game over!');
+                    this.unwatchGame();
+                } else {
+                    // Alert if current user is active
+                    const activeUser = this.GameService.activeUserForGame(game);
+                    if (activeUser.user.userID === this.UserService.currentUser.user.userID) {
+                        this.AlertService.pushAlert('Your turn!');
+                    }
+                }
             }
         };
         this.unwatchGame = game.$watch(gameChanged);

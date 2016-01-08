@@ -1,6 +1,7 @@
 class SettingsController {
-    constructor(AlertService) {
+    constructor(AlertService, $timeout) {
         this.AlertService = AlertService;
+        this.$timeout = $timeout;
         this.name = 'SettingsController';
         this.activate();
     }
@@ -13,8 +14,10 @@ class SettingsController {
         if (!this.AlertService.hasPermission && this.notificationsEnabled) {
             this.notificationsEnabled = false;
             this.AlertService.requestNotificationPermission().then((result) => {
-                this.notificationsEnabled = result;
-                this.gameSettings.notifications = result;
+                this.$timeout(() => {
+                    this.notificationsEnabled = result;
+                    this.gameSettings.notifications = result;
+                });
             });
         }
         if (this.AlertService.hasPermission) {
@@ -23,6 +26,6 @@ class SettingsController {
     }
 }
 
-SettingsController.$inject = ['AlertService'];
+SettingsController.$inject = ['AlertService', '$timeout'];
 
 export default SettingsController;

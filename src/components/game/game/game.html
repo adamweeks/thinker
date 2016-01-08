@@ -2,9 +2,7 @@
     <div flex-gt-xs=65 flex>
         <div ng-if="vm.gameLoaded && vm.game.inProgress">
             <div ng-if="vm.game.started">
-                <game-question game="vm.game"></game-question>
-                <game-guesser game="vm.game" guesser-number="0"></game-guesser>
-                <game-guesser game="vm.game" guesser-number="1"></game-guesser>
+                <game-board game="vm.game" game-settings="vm.gameSettings"></game-board>
             </div>
             <div ng-if="!vm.game.started">
                 <game-lobby game="vm.game"></game-lobby>

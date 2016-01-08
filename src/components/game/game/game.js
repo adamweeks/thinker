@@ -1,3 +1,10 @@
+class GameSettings {
+    constructor() {
+        this.sounds = true;
+        this.notifications = true;
+    }
+}
+
 class GameController {
     constructor($stateParams, GameService, UserService, AlertService) {
         this.AlertService = AlertService;
@@ -5,6 +12,7 @@ class GameController {
         this.UserService = UserService;
         this.name = 'GameController';
         this.gameID = $stateParams.gameID;
+        this.gameSettings = new GameSettings();
         this.gameLoaded = false;
         this.loadGame(this.gameID);
     }
@@ -23,7 +31,13 @@ class GameController {
 
     watchGameplay(game) {
         const gameChanged = () => {
-            this.AlertService.playAlertSound();
+            if (this.gameSettings.sounds) {
+                this.AlertService.playAlertSound();
+            }
+
+            if (this.gameSettings.notifications) {
+                // TODO: Push notifications
+            }
         };
         this.unwatchGame = game.$watch(gameChanged);
     }

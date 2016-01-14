@@ -11,34 +11,54 @@
             <md-divider ></md-divider>
 
             <md-subheader class="md-no-sticky">Answerer</md-subheader>
-            <md-list-item class="md-3-line">
-                <img ng-if="vm.game.answer.user" class="md-avatar" ng-src="{{ vm.game.answer.user.profileImage }}"/>
-                <div ng-if="vm.game.answer.user" class="md-list-item-text">
+
+            <md-list-item class="md-2-line"  ng-if="vm.game.answer.user">
+                <img class="md-avatar" ng-src="{{ vm.game.answer.user.profileImage }}"/>
+                <div class="md-list-item-text">
                     <h3>{{ vm.game.answer.user.username }}</h3>
                     <p class="md-subhead">Answering</p>
                 </div>
-                <md-icon ng-if="!vm.game.answer.user" class="md-avatar-icon material-icons">trending_down</md-icon>
-                <div ng-if="!vm.game.answer.user" class="md-list-item-text" layout="column">
-                    <h3>Waiting on a user to answer.</h3>
-                    <h4>Invite user via link</h4>
+            </md-list-item>
+            <md-list-item class="md-3-line"  ng-if="!vm.game.answer.user && vm.isCreator">
+                <md-icon class="md-avatar-icon material-icons">trending_down</md-icon>
+                <div class="md-list-item-text" layout="column">
+                    <h3>Waiting on a person to answer.</h3>
+                    <h4>Invite person to answer via link</h4>
                     <p class="md-caption invite-link"><a ng-href="{{vm.answererLink}}">{{vm.answererLink}}</a></p>
                 </div>
             </md-list-item>
+            <md-list-item  class="md-2-line" ng-if="!vm.game.answer.user && !vm.isCreator">
+                <md-icon class="md-avatar-icon material-icons">trending_down</md-icon>
+                <div class="md-list-item-text">
+                    <h3>Waiting on a person to answer.</h3>
+                </div>
+            </md-list-item>
+
             <md-divider ></md-divider>
 
             <md-subheader class="md-no-sticky">Guessers</md-subheader>
-            <md-list-item class="md-3-line" ng-repeat="guesser in vm.game.guessers">
-                <img class="md-avatar" ng-src="{{ guesser.user.profileImage }}" ng-if="guesser.user"/>
-                <div class="md-list-item-text" ng-if="guesser.user">
-                    <h3>{{ guesser.user.username }}</h3>
-                    <p class="md-subhead">Guesser {{$index +1 }}</p>
-                </div>
-                <md-icon ng-if="!guesser.user" class="md-avatar-icon material-icons">trending_down</md-icon>
-                <div ng-if="!guesser.user" class="md-list-item-text" layout="column">
-                    <h3>Waiting on a guesser to join.</h3>
-                    <h4>Invite user via link</h4>
-                    <p class="md-caption invite-link"><a ng-href="{{vm.guesserLink}}">{{vm.guesserLink}}</a></p>
-                </div>
-            </md-list-item>
+            <div ng-repeat="guesser in vm.game.guessers">
+                <md-list-item ng-if="guesser.user" class="md-2-line">
+                    <img class="md-avatar" ng-src="{{ guesser.user.profileImage }}"/>
+                    <div class="md-list-item-text">
+                        <h3>{{ guesser.user.username }}</h3>
+                        <p class="md-subhead">Guesser {{$index +1 }}</p>
+                    </div>
+                </md-list-item>
+                <md-list-item ng-if="!guesser.user && vm.isCreator" class="md-3-line">
+                    <md-icon class="md-avatar-icon material-icons">trending_down</md-icon>
+                    <div class="md-list-item-text" layout="column">
+                        <h3>Waiting on a guesser to join.</h3>
+                        <h4>Invite person to guess via link</h4>
+                        <p class="md-caption invite-link"><a ng-href="{{vm.guesserLink}}">{{vm.guesserLink}}</a></p>
+                    </div>
+                </md-list-item>
+                <md-list-item ng-if="!guesser.user && !vm.isCreator" class="md-2-line">
+                    <md-icon class="md-avatar-icon material-icons">trending_down</md-icon>
+                    <div class="md-list-item-text" layout="column">
+                        <h3>Waiting on a guesser to join.</h3>
+                    </div>
+                </md-list-item>
+            </div>
     </md-card-content>
 </md-card>

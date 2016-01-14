@@ -206,6 +206,10 @@ class GameService {
     inviteGuesserLink(game) {
         return this.inviteLink(game, 'guesser');
     }
+
+    isGameCreator(game, user) {
+        return game.creator.userID === user.userID;
+    }
 }
 
 GameService.$inject = ['UserService', 'FirebaseService', '$state'];

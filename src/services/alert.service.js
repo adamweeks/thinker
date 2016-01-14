@@ -1,9 +1,18 @@
 import '../sounds/alert.wav';
 
 class AlertService {
-    constructor() {
-        this.Notification = window.Notification || window.mozNotification || window.webkitNotification;
+    constructor($window) {
+        this.$window = $window;
+        this.Notification = $window.Notification || $window.mozNotification || $window.webkitNotification;
         this.hasPermission = this.Notification.permission === 'granted';
+        this.isWindowActive = true;
+
+        this.$window.onblur = () => {
+            this.isWindowActive = false;
+        };
+        this.$window.onfocus = () => {
+            this.isWindowActive = true;
+        };
     }
 
     playAlertSound() {
@@ -12,8 +21,10 @@ class AlertService {
     }
 
     pushAlert(alertText) {
-        const notification = new this.Notification(alertText);
-        return notification;
+        if (this.isWindowActive) {
+            const notification = new this.Notification(alertText);
+            return notification;
+        }
     }
 
     requestNotificationPermission() {
@@ -35,5 +46,7 @@ class AlertService {
         });
     }
 }
+
+AlertService.$inject = ['$window'];
 
 export default AlertService;

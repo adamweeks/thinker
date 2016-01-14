@@ -1,0 +1,11 @@
+<md-card class="md-whiteframe-15dp">
+    <md-card-content ng-class="{'history-listing': vm.$mdMedia('gt-xs')}">
+        <md-subheader class="md-no-sticky">Settings</md-subheader>
+        <md-checkbox ng-model="vm.gameSettings.sounds" aria-label="Sounds">
+            Sounds
+        </md-checkbox>
+        <md-checkbox ng-model="vm.notificationsEnabled" aria-label="Notifications" ng-change="vm.notificationChanged()">
+            Notifications
+        </md-checkbox>
+    </md-card-content>
+</md-card>

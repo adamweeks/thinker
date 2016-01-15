@@ -69,7 +69,7 @@
                             ng-disabled="vm.form.guess.$invalid"
                             ng-click="vm.saveGuess()">Save</md-button>
                         <md-button class="md-raised md-warning"
-                            ng-click="vm.lowerGuess()">Lower!</md-button>
+                            ng-click="vm.lowerGuess()" ng-disabled="vm.game.currentGuess === 0">Lower!</md-button>
                     </md-card-actions>
                 </div>
             </div>

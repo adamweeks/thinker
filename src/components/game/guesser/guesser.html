@@ -5,13 +5,13 @@
         </md-card-avatar>
         <md-card-header-text>
             <span class="md-title">{{ vm.guesser.user.username }}</span>
-            <span class="md-subhead">Guessing</span>
+            <span class="md-subhead">Guesser</span>
         </md-card-header-text>
     </md-card-header>
     <md-card-header ng-if="!vm.guesser.user">
         <md-card-header-text>
             <span class="md-title">Waiting...</span>
-            <span class="md-subhead">Guessing</span>
+            <span class="md-subhead">Guesser</span>
         </md-card-header-text>
     </md-card-header>
     <!-- Guess states:
@@ -67,7 +67,7 @@
                     <md-card-actions layout="row" layout-align="start">
                         <md-button class="md-raised md-primary" ng-class="{disabled: vm.form.guess.$invalid}"
                             ng-disabled="vm.form.guess.$invalid"
-                            ng-click="vm.saveGuess()">Save</md-button>
+                            ng-click="vm.saveGuess()">Guess</md-button>
                         <md-button class="md-raised md-warning"
                             ng-click="vm.lowerGuess()" ng-disabled="vm.game.currentGuess === 0">Lower!</md-button>
                     </md-card-actions>

@@ -12,6 +12,7 @@ angular.js.tmproj
 /node_modules/
 bower_components/
 angular.xcodeproj
+.vscode
 .idea
 *.iml
 .agignore

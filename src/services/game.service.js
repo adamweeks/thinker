@@ -195,6 +195,10 @@ class GameService {
             });
     }
 
+    gameLink(game) {
+        return this.$state.href('game', {'gameID': game.$id}, {absolute: true});
+    }
+
     inviteLink(game, type) {
         return this.$state.href('invite', {'gameID': game.$id, 'role': type}, {absolute: true});
     }

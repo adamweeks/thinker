@@ -1,0 +1,8 @@
+<md-card class="md-whiteframe-15dp">
+    <md-card-content ng-class="{'history-listing': vm.$mdMedia('gt-xs')}">
+        <md-subheader class="md-no-sticky">Share a link to this game!</md-subheader>
+        <md-input-container class="md-block">
+            <input ng-model="vm.gameLink" readonly ng-click="vm.selectText($event)">
+        </md-input-container>
+    </md-card-content>
+</md-card>
